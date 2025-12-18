@@ -6,15 +6,18 @@ interface PaymentSelectionProps {
   onBack: () => void;
   onNavigate: (screen: Screen) => void;
   totalAmount: number;
+  onSelectPayment: (method: 'card' | 'cash') => void;
 }
 
-export default function PaymentSelection({ onBack, onNavigate, totalAmount }: PaymentSelectionProps) {
+export default function PaymentSelection({ onBack, onNavigate, totalAmount, onSelectPayment }: PaymentSelectionProps) {
   const [selectedMethod, setSelectedMethod] = useState<'card' | 'cash' | null>(null);
 
   const handleContinue = () => {
     if (selectedMethod === 'card') {
+      onSelectPayment('card');
       onNavigate('card-entry');
     } else if (selectedMethod === 'cash') {
+      onSelectPayment('cash');
       onNavigate('order-confirmation');
     }
   };
