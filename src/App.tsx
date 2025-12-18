@@ -167,6 +167,7 @@ export default function App() {
             restaurants={restaurantsList}
             onSelectRestaurant={openRestaurant}
             cartItemCount={cartItems.length}
+            onAddToCart={addToCart}
             activeOrder={activeOrder}
           />
         )}

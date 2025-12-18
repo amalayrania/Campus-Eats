@@ -10,10 +10,11 @@ interface HomeScreenProps {
   restaurants: RestaurantDetails[];
   onSelectRestaurant: (restaurant: RestaurantDetails) => void;
   cartItemCount: number;
+  onAddToCart: (item: { id: string; name: string; price: number; image: string }) => void;
   activeOrder?: Order | null;
 }
 
-export default function HomeScreen({ onNavigate, restaurants, onSelectRestaurant, cartItemCount, activeOrder }: HomeScreenProps) {
+export default function HomeScreen({ onNavigate, restaurants, onSelectRestaurant, cartItemCount, onAddToCart, activeOrder }: HomeScreenProps) {
   const [searchQuery, setSearchQuery] = useState('');
 
   // Filter restaurants based on search query
@@ -29,6 +30,12 @@ export default function HomeScreen({ onNavigate, restaurants, onSelectRestaurant
   const handleClearSearch = () => {
     setSearchQuery('');
   };
+
+  const recommendedItems = useMemo(() => {
+    return restaurants
+      .flatMap((restaurant) => restaurant.categories.flatMap((category) => category.items))
+      .slice(0, 4);
+  }, [restaurants]);
 
   return (
     <div className="h-full bg-[#F8F9FA] overflow-y-auto pb-24">
@@ -116,28 +123,23 @@ export default function HomeScreen({ onNavigate, restaurants, onSelectRestaurant
           <h3 className="text-[#1F2937]">Recommended for You</h3>
           <button className="text-[#2D6A4F]">See all</button>
         </div>
-        <div className="grid grid-cols-2 gap-4">
-          <FoodCard
-            name="Shawarma"
-            image="https://images.unsplash.com/photo-1721980743519-01f627e7b4b6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzYW5kd2ljaCUyMGZvb2R8ZW58MXx8fHwxNzYzNjAyNDI0fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
-            price={45}
-          />
-          <FoodCard
-            name="Pizza Margarita"
-            image="https://images.unsplash.com/photo-1649817253654-4d356cdc4662?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwaXp6YSUyMG1lYWx8ZW58MXx8fHwxNzYzNjM2MTkwfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
-            price={55}
-          />
-          <FoodCard
-            name="Cheese Bomb Burger"
-            image="https://images.unsplash.com/photo-1722125680299-783f98369451?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxyZXN0YXVyYW50JTIwZm9vZCUyMGJ1cmdlcnxlbnwxfHx8fDE3NjM2MDI5NTF8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
-            price={50}
-          />
-          <FoodCard
-            name="Salad Bar"
-            image="https://images.unsplash.com/photo-1651352650142-385087834d9d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzYWxhZCUyMGhlYWx0aHklMjBmb29kfGVufDF8fHx8MTc2MzU5ODUwMHww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
-            price={35}
-          />
-        </div>
+        {recommendedItems.length > 0 ? (
+          <div className="grid grid-cols-2 gap-4">
+            {recommendedItems.map((item) => (
+              <FoodCard
+                key={item.id}
+                name={item.name}
+                image={item.image}
+                price={item.price}
+                onAdd={() => onAddToCart(item)}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-8">
+            <p className="text-[#6B7280]">No recommendations available yet.</p>
+          </div>
+        )}
       </div>
 
       {/* Bottom Navigation */}
@@ -229,9 +231,10 @@ interface FoodCardProps {
   name: string;
   image: string;
   price: number;
+  onAdd: () => void;
 }
 
-function FoodCard({ name, image, price }: FoodCardProps) {
+function FoodCard({ name, image, price, onAdd }: FoodCardProps) {
   return (
     <div className="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-lg transition-all">
       <div className="relative h-32">
@@ -245,7 +248,10 @@ function FoodCard({ name, image, price }: FoodCardProps) {
         <p className="text-[#1F2937] mb-2">{name}</p>
         <div className="flex items-center justify-between">
           <span className="text-[#2D6A4F]">{price} MAD</span>
-          <button className="w-8 h-8 rounded-full bg-[#2D6A4F] flex items-center justify-center text-white hover:bg-[#40916C] transition-colors active:scale-95">
+          <button
+            onClick={onAdd}
+            className="w-8 h-8 rounded-full bg-[#2D6A4F] flex items-center justify-center text-white hover:bg-[#40916C] transition-colors active:scale-95"
+          >
             +
           </button>
         </div>
