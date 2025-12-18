@@ -14,6 +14,7 @@ import CardEntry from './components/CardEntry';
 import OrderConfirmation from './components/OrderConfirmation';
 import OrderActiveSummary from './components/OrderActiveSummary';
 import { Order, getActiveOrder } from './services/api';
+import { restaurants, RestaurantDetails } from './services/restaurantData';
 
 // Default user ID for development
 const DEFAULT_USER_ID = 'user1';
@@ -49,6 +50,7 @@ export default function App() {
   const [paymentMethod, setPaymentMethod] = useState<'card' | 'cash'>('card');
   const [activeOrder, setActiveOrder] = useState<Order | null>(null);
   const [userId, setUserId] = useState<string>(DEFAULT_USER_ID);
+  const [selectedRestaurant, setSelectedRestaurant] = useState<RestaurantDetails>(restaurants[0]);
 
   const navigateTo = (screen: Screen) => {
     // Guard: only allow tracking screen when there's an active order
@@ -63,6 +65,11 @@ export default function App() {
     if (screen === 'home') {
       fetchActiveOrder();
     }
+  };
+
+  const openRestaurant = (restaurant: RestaurantDetails) => {
+    setSelectedRestaurant(restaurant);
+    navigateTo('restaurant');
   };
 
   const fetchActiveOrder = async () => {
@@ -126,19 +133,22 @@ export default function App() {
           />
         )}
         {currentScreen === 'home' && (
-          <HomeScreen 
+          <HomeScreen
             onNavigate={navigateTo}
+            restaurants={restaurants}
+            onSelectRestaurant={openRestaurant}
             cartItemCount={cartItems.length}
             activeOrder={activeOrder}
           />
         )}
         {currentScreen === 'restaurant' && (
-          <RestaurantMenu 
+          <RestaurantMenu
             onBack={() => navigateTo('home')}
             onNavigate={navigateTo}
             onAddToCart={addToCart}
             cartItemCount={cartItems.length}
             activeOrder={activeOrder}
+            restaurant={selectedRestaurant}
           />
         )}
         {currentScreen === 'cart' && (
@@ -182,10 +192,11 @@ export default function App() {
           />
         )}
         {currentScreen === 'payment-selection' && (
-          <PaymentSelection 
+          <PaymentSelection
             onBack={() => navigateTo('cart')}
             onNavigate={navigateTo}
             totalAmount={cartTotal}
+            onSelectPayment={setPaymentMethod}
           />
         )}
         {currentScreen === 'card-entry' && (
@@ -202,6 +213,7 @@ export default function App() {
             paymentMethod={paymentMethod}
             cartItems={cartItems}
             userId={userId}
+            restaurantId={selectedRestaurant.id}
             onOrderCreated={(order) => {
               setActiveOrder(order);
               clearCart();

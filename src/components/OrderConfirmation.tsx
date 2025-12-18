@@ -1,6 +1,6 @@
-import { CheckCircle, Package, MapPin, Clock } from 'lucide-react';
+import { CheckCircle, Package, MapPin, Clock, AlertTriangle } from 'lucide-react';
 import { Screen, CartItem } from '../App';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { createOrder, Order } from '../services/api';
 
 interface OrderConfirmationProps {
@@ -9,20 +9,23 @@ interface OrderConfirmationProps {
   paymentMethod: 'card' | 'cash';
   cartItems: CartItem[];
   userId: string;
+  restaurantId: string;
   onOrderCreated: (order: Order) => void;
 }
 
-export default function OrderConfirmation({ 
-  onNavigate, 
-  totalAmount, 
+export default function OrderConfirmation({
+  onNavigate,
+  totalAmount,
   paymentMethod,
   cartItems,
   userId,
+  restaurantId,
   onOrderCreated
 }: OrderConfirmationProps) {
   const [showToast, setShowToast] = useState(true);
   const [createdOrder, setCreatedOrder] = useState<Order | null>(null);
   const [isCreating, setIsCreating] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -31,42 +34,73 @@ export default function OrderConfirmation({
     return () => clearTimeout(timer);
   }, []);
 
+  const placeOrder = useCallback(async () => {
+    try {
+      setError(null);
+      setIsCreating(true);
+      const orderData = {
+        userId,
+        restaurantId,
+        items: cartItems.map(item => ({
+          id: item.id,
+          name: item.name,
+          price: item.price,
+          quantity: item.quantity
+        })),
+        total: totalAmount
+      };
+
+      const order = await createOrder(orderData);
+      setCreatedOrder(order);
+      onOrderCreated(order);
+    } catch (error) {
+      console.error('Failed to create order:', error);
+      setError('We could not place your order. Please try again.');
+      setCreatedOrder(null);
+    } finally {
+      setIsCreating(false);
+    }
+  }, [cartItems, onOrderCreated, restaurantId, totalAmount, userId]);
+
   // Create order on mount
   useEffect(() => {
-    const placeOrder = async () => {
-      try {
-        setIsCreating(true);
-        const orderData = {
-          userId,
-          restaurantId: '1', // Using default restaurant ID
-          items: cartItems.map(item => ({
-            id: item.id,
-            name: item.name,
-            price: item.price,
-            quantity: item.quantity
-          })),
-          total: totalAmount
-        };
-        
-        const order = await createOrder(orderData);
-        setCreatedOrder(order);
-        onOrderCreated(order);
-      } catch (error) {
-        console.error('Failed to create order:', error);
-      } finally {
-        setIsCreating(false);
-      }
-    };
-    
     placeOrder();
-  }, []);
+  }, [placeOrder]);
 
   // Show loading state while creating order
-  if (isCreating || !createdOrder) {
+  if (isCreating) {
     return (
       <div className="h-full bg-[#F8F9FA] flex flex-col items-center justify-center px-6">
         <div className="w-16 h-16 border-4 border-[#2D6A4F] border-t-transparent rounded-full animate-spin mb-4"></div>
         <p className="text-[#6B7280]">Placing your order...</p>
+      </div>
+    );
+  }
+
+  if (error || !createdOrder) {
+    return (
+      <div className="h-full bg-[#F8F9FA] flex flex-col items-center justify-center px-6 text-center space-y-6">
+        <div className="w-16 h-16 rounded-full bg-red-50 text-red-600 flex items-center justify-center">
+          <AlertTriangle className="w-8 h-8" />
+        </div>
+        <div className="space-y-2">
+          <h2 className="text-[#1F2937]">We hit a snag</h2>
+          <p className="text-[#6B7280] max-w-sm">{error || 'Something went wrong while placing your order. Please try again.'}</p>
+        </div>
+        <div className="w-full space-y-3">
+          <button
+            onClick={placeOrder}
+            className="w-full bg-[#2D6A4F] text-white rounded-2xl py-4 shadow-lg shadow-[#2D6A4F]/30 hover:bg-[#40916C] transition-all active:scale-95"
+          >
+            Retry order
+          </button>
+          <button
+            onClick={() => onNavigate('payment-selection')}
+            className="w-full bg-white text-[#2D6A4F] border-2 border-[#2D6A4F] rounded-2xl py-4 hover:bg-[#F8F9FA] transition-all active:scale-95"
+          >
+            Back to payment
+          </button>
+        </div>
       </div>
     );
   }
