@@ -1,4 +1,5 @@
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+const DEFAULT_TIMEOUT_MS = 8000;
 
 export interface Restaurant {
   id: string;
@@ -66,6 +67,16 @@ async function handleResponse<T>(response: Response): Promise<T> {
   return response.json();
 }
 
+async function fetchWithTimeout(input: RequestInfo, init?: RequestInit, timeoutMs = DEFAULT_TIMEOUT_MS) {
+  const controller = new AbortController();
+  const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    return await fetch(input, { ...init, signal: controller.signal });
+  } finally {
+    window.clearTimeout(timeoutId);
+  }
+}
+
 // Restaurant endpoints
 export async function getRestaurants(): Promise<Restaurant[]> {
   const response = await fetch(`${API_URL}/api/restaurants`);
@@ -89,7 +100,7 @@ export async function createOrder(orderData: {
   items: Array<{ id: string; name: string; price: number; quantity: number }>;
   total: number;
 }): Promise<Order> {
-  const response = await fetch(`${API_URL}/api/orders`, {
+  const response = await fetchWithTimeout(`${API_URL}/api/orders`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
