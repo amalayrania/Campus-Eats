@@ -13,7 +13,7 @@ import PaymentSelection from './components/PaymentSelection';
 import CardEntry from './components/CardEntry';
 import OrderConfirmation from './components/OrderConfirmation';
 import OrderActiveSummary from './components/OrderActiveSummary';
-import { Order, getActiveOrder } from './services/api';
+import { Order, Restaurant, getActiveOrder, getRestaurants } from './services/api';
 import { restaurants, RestaurantDetails } from './services/restaurantData';
 
 // Default user ID for development
@@ -50,15 +50,21 @@ export default function App() {
   const [paymentMethod, setPaymentMethod] = useState<'card' | 'cash'>('card');
   const [activeOrder, setActiveOrder] = useState<Order | null>(null);
   const [userId, setUserId] = useState<string>(DEFAULT_USER_ID);
+  const [restaurantsList, setRestaurantsList] = useState<RestaurantDetails[]>(restaurants);
   const [selectedRestaurant, setSelectedRestaurant] = useState<RestaurantDetails>(restaurants[0]);
 
+  const mapRestaurantToDetails = (restaurant: Restaurant): RestaurantDetails => ({
+    ...restaurant,
+    heroImage: restaurant.image,
+    categories: [
+      {
+        name: 'Menu',
+        items: restaurant.menu
+      }
+    ]
+  });
+
   const navigateTo = (screen: Screen) => {
-    // Guard: only allow tracking screen when there's an active order
-    if (screen === 'tracking' && !activeOrder) {
-      console.warn('Cannot navigate to tracking: no active order');
-      return;
-    }
-    
     setCurrentScreen(screen);
     
     // Fetch active order when navigating to home
@@ -82,12 +88,35 @@ export default function App() {
     }
   };
 
+  const fetchRestaurants = async () => {
+    try {
+      const data = await getRestaurants();
+      setRestaurantsList(data.map(mapRestaurantToDetails));
+    } catch (error) {
+      console.error('Failed to fetch restaurants:', error);
+      setRestaurantsList(restaurants);
+    }
+  };
+
   // Fetch active order on mount if already on home screen
   useEffect(() => {
     if (currentScreen === 'home') {
       fetchActiveOrder();
     }
   }, [userId]);
+
+  useEffect(() => {
+    fetchRestaurants();
+  }, []);
+
+  useEffect(() => {
+    if (!restaurantsList.length) {
+      return;
+    }
+    if (!restaurantsList.find((restaurant) => restaurant.id === selectedRestaurant.id)) {
+      setSelectedRestaurant(restaurantsList[0]);
+    }
+  }, [restaurantsList, selectedRestaurant.id]);
 
   const addToCart = (item: Omit<CartItem, 'quantity'>) => {
     setCartItems(prev => {
@@ -135,7 +164,7 @@ export default function App() {
         {currentScreen === 'home' && (
           <HomeScreen
             onNavigate={navigateTo}
-            restaurants={restaurants}
+            restaurants={restaurantsList}
             onSelectRestaurant={openRestaurant}
             cartItemCount={cartItems.length}
             activeOrder={activeOrder}
