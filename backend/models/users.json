@@ -1,0 +1,16 @@
+[
+  {
+    "id": "user1",
+    "email": "student@campus.edu",
+    "name": "Student User",
+    "phone": "+212 6 00 00 00 00",
+    "address": "Campus Dormitory, Building A"
+  },
+  {
+    "id": "user2",
+    "email": "user@example.com",
+    "name": "Test User",
+    "phone": "+212 6 11 11 11 11",
+    "address": "Campus Apartment, Block B"
+  }
+]

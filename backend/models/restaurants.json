@@ -1,0 +1,102 @@
+[
+  {
+    "id": "1",
+    "name": "Proxy",
+    "image": "https://images.unsplash.com/photo-1722125680299-783f98369451?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxyZXN0YXVyYW50JTIwZm9vZCUyMGJ1cmdlcnxlbnwxfHx8fDE3NjM2MDI5NTF8MA&ixlib=rb-4.1.0&q=80&w=1080",
+    "time": "15–20 min",
+    "status": "open",
+    "rating": 4.8,
+    "description": "American-style burgers and comfort food",
+    "menu": [
+      {
+        "id": "1",
+        "name": "Cheese Bomb Burger",
+        "price": 50,
+        "image": "https://images.unsplash.com/photo-1722125680299-783f98369451?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxyZXN0YXVyYW50JTIwZm9vZCUyMGJ1cmdlcnxlbnwxfHx8fDE3NjM2MDI5NTF8MA&ixlib=rb-4.1.0&q=80&w=1080",
+        "description": "Juicy beef patty with melted cheese"
+      },
+      {
+        "id": "2",
+        "name": "Classic Burger",
+        "price": 45,
+        "image": "https://images.unsplash.com/photo-1722125680299-783f98369451?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxyZXN0YXVyYW50JTIwZm9vZCUyMGJ1cmdlcnxlbnwxfHx8fDE3NjM2MDI5NTF8MA&ixlib=rb-4.1.0&q=80&w=1080",
+        "description": "Traditional beef burger with lettuce and tomato"
+      }
+    ]
+  },
+  {
+    "id": "2",
+    "name": "L'Italien",
+    "image": "https://images.unsplash.com/photo-1649817253654-4d356cdc4662?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwaXp6YSUyMG1lYWx8ZW58MXx8fHwxNzYzNjM2MTkwfDA&ixlib=rb-4.1.0&q=80&w=1080",
+    "time": "20–25 min",
+    "status": "busy",
+    "rating": 4.6,
+    "description": "Authentic Italian cuisine and pizzas",
+    "menu": [
+      {
+        "id": "3",
+        "name": "Pizza Margherita",
+        "price": 55,
+        "image": "https://images.unsplash.com/photo-1649817253654-4d356cdc4662?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwaXp6YSUyMG1lYWx8ZW58MXx8fHwxNzYzNjM2MTkwfDA&ixlib=rb-4.1.0&q=80&w=1080",
+        "description": "Classic pizza with fresh mozzarella and basil"
+      },
+      {
+        "id": "4",
+        "name": "Pasta Carbonara",
+        "price": 60,
+        "image": "https://images.unsplash.com/photo-1649817253654-4d356cdc4662?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwaXp6YSUyMG1lYWx8ZW58MXx8fHwxNzYzNjM2MTkwfDA&ixlib=rb-4.1.0&q=80&w=1080",
+        "description": "Creamy pasta with bacon and parmesan"
+      }
+    ]
+  },
+  {
+    "id": "3",
+    "name": "Shawarma House",
+    "image": "https://images.unsplash.com/photo-1721980743519-01f627e7b4b6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzYW5kd2ljaCUyMGZvb2R8ZW58MXx8fHwxNzYzNjAyNDI0fDA&ixlib=rb-4.1.0&q=80&w=1080",
+    "time": "10–15 min",
+    "status": "open",
+    "rating": 4.7,
+    "description": "Middle Eastern wraps and sandwiches",
+    "menu": [
+      {
+        "id": "5",
+        "name": "Shawarma",
+        "price": 45,
+        "image": "https://images.unsplash.com/photo-1721980743519-01f627e7b4b6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzYW5kd2ljaCUyMGZvb2R8ZW58MXx8fHwxNzYzNjAyNDI0fDA&ixlib=rb-4.1.0&q=80&w=1080",
+        "description": "Grilled meat wrap with tahini sauce"
+      },
+      {
+        "id": "6",
+        "name": "Falafel Wrap",
+        "price": 40,
+        "image": "https://images.unsplash.com/photo-1721980743519-01f627e7b4b6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzYW5kd2ljaCUyMGZvb2R8ZW58MXx8fHwxNzYzNjAyNDI0fDA&ixlib=rb-4.1.0&q=80&w=1080",
+        "description": "Crispy chickpea patties in a wrap"
+      }
+    ]
+  },
+  {
+    "id": "4",
+    "name": "Salad Bar",
+    "image": "https://images.unsplash.com/photo-1651352650142-385087834d9d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzYWxhZCUyMGhlYWx0aHklMjBmb29kfGVufDF8fHx8MTc2MzU5ODUwMHww&ixlib=rb-4.1.0&q=80&w=1080",
+    "time": "15–20 min",
+    "status": "open",
+    "rating": 4.9,
+    "description": "Fresh and healthy salads",
+    "menu": [
+      {
+        "id": "7",
+        "name": "Caesar Salad",
+        "price": 35,
+        "image": "https://images.unsplash.com/photo-1651352650142-385087834d9d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzYWxhZCUyMGhlYWx0aHklMjBmb29kfGVufDF8fHx8MTc2MzU5ODUwMHww&ixlib=rb-4.1.0&q=80&w=1080",
+        "description": "Crispy romaine with caesar dressing"
+      },
+      {
+        "id": "8",
+        "name": "Greek Salad",
+        "price": 40,
+        "image": "https://images.unsplash.com/photo-1651352650142-385087834d9d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzYWxhZCUyMGhlYWx0aHklMjBmb29kfGVufDF8fHx8MTc2MzU5ODUwMHww&ixlib=rb-4.1.0&q=80&w=1080",
+        "description": "Fresh vegetables with feta cheese"
+      }
+    ]
+  }
+]
