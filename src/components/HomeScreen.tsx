@@ -101,7 +101,11 @@ export default function HomeScreen({ onNavigate, restaurants, onSelectRestaurant
           </div>
         ) : (
           <div className="text-center py-8">
-            <p className="text-[#6B7280]">No restaurants found matching "{searchQuery}"</p>
+            <p className="text-[#6B7280]">
+              {searchQuery.trim()
+                ? `No restaurants found matching "${searchQuery}"`
+                : 'No restaurants are available right now.'}
+            </p>
           </div>
         )}
       </div>
