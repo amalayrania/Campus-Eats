@@ -3,47 +3,18 @@ import { ImageWithFallback } from './figma/ImageWithFallback';
 import { Screen } from '../App';
 import { Order, getOrderProgress, formatOrderStatus } from '../services/api';
 import { useState, useMemo } from 'react';
+import { RestaurantDetails } from '../services/restaurantData';
 
 interface HomeScreenProps {
   onNavigate: (screen: Screen) => void;
+  restaurants: RestaurantDetails[];
+  onSelectRestaurant: (restaurant: RestaurantDetails) => void;
   cartItemCount: number;
   activeOrder?: Order | null;
 }
 
-export default function HomeScreen({ onNavigate, cartItemCount, activeOrder }: HomeScreenProps) {
+export default function HomeScreen({ onNavigate, restaurants, onSelectRestaurant, cartItemCount, activeOrder }: HomeScreenProps) {
   const [searchQuery, setSearchQuery] = useState('');
-
-  // Define restaurants data
-  const restaurants = [
-    {
-      name: "Proxy",
-      image: "https://images.unsplash.com/photo-1722125680299-783f98369451?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxyZXN0YXVyYW50JTIwZm9vZCUyMGJ1cmdlcnxlbnwxfHx8fDE3NjM2MDI5NTF8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-      time: "15–20 min",
-      status: "open" as const,
-      rating: 4.8,
-    },
-    {
-      name: "L'Italien",
-      image: "https://images.unsplash.com/photo-1649817253654-4d356cdc4662?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwaXp6YSUyMG1lYWx8ZW58MXx8fHwxNzYzNjM2MTkwfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-      time: "20–25 min",
-      status: "busy" as const,
-      rating: 4.6,
-    },
-    {
-      name: "L'Américain",
-      image: "https://images.unsplash.com/photo-1722125680299-783f98369451?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxyZXN0YXVyYW50JTIwZm9vZCUyMGJ1cmdlcnxlbnwxfHx8fDE3NjM2MDI5NTF8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-      time: "10–15 min",
-      status: "open" as const,
-      rating: 4.9,
-    },
-    {
-      name: "L'International",
-      image: "https://images.unsplash.com/photo-1651352650142-385087834d9d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzYWxhZCUyMGhlYWx0aHklMjBmb29kfGVufDF8fHx8MTc2MzU5ODUwMHww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-      time: "15–20 min",
-      status: "open" as const,
-      rating: 4.7,
-    },
-  ];
 
   // Filter restaurants based on search query
   const filteredRestaurants = useMemo(() => {
@@ -53,7 +24,7 @@ export default function HomeScreen({ onNavigate, cartItemCount, activeOrder }: H
     return restaurants.filter(restaurant =>
       restaurant.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
-  }, [searchQuery]);
+  }, [restaurants, searchQuery]);
 
   const handleClearSearch = () => {
     setSearchQuery('');
@@ -118,13 +89,13 @@ export default function HomeScreen({ onNavigate, cartItemCount, activeOrder }: H
           <div className="flex space-x-4 overflow-x-auto pb-2 -mx-6 px-6 scrollbar-hide">
             {filteredRestaurants.map((restaurant) => (
               <RestaurantCard
-                key={restaurant.name}
+                key={restaurant.id}
                 name={restaurant.name}
                 image={restaurant.image}
                 time={restaurant.time}
                 status={restaurant.status}
                 rating={restaurant.rating}
-                onClick={() => onNavigate('restaurant')}
+                onClick={() => onSelectRestaurant(restaurant)}
               />
             ))}
           </div>

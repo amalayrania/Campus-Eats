@@ -1,20 +1,29 @@
 import { ArrowLeft, CreditCard, Banknote, Check } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Screen } from '../App';
 
 interface PaymentSelectionProps {
   onBack: () => void;
   onNavigate: (screen: Screen) => void;
   totalAmount: number;
+  onSelectPayment: (method: 'card' | 'cash') => void;
+  initialMethod?: 'card' | 'cash';
 }
 
-export default function PaymentSelection({ onBack, onNavigate, totalAmount }: PaymentSelectionProps) {
-  const [selectedMethod, setSelectedMethod] = useState<'card' | 'cash' | null>(null);
+export default function PaymentSelection({ onBack, onNavigate, totalAmount, onSelectPayment, initialMethod }: PaymentSelectionProps) {
+  const [selectedMethod, setSelectedMethod] = useState<'card' | 'cash' | null>(initialMethod ?? null);
+
+  // Keep local selection in sync with the caller's persisted method when returning to this screen
+  useEffect(() => {
+    setSelectedMethod(initialMethod ?? null);
+  }, [initialMethod]);
 
   const handleContinue = () => {
     if (selectedMethod === 'card') {
+      onSelectPayment('card');
       onNavigate('card-entry');
     } else if (selectedMethod === 'cash') {
+      onSelectPayment('cash');
       onNavigate('order-confirmation');
     }
   };
