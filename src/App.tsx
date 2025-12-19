@@ -13,7 +13,11 @@ import PaymentSelection from './components/PaymentSelection';
 import CardEntry from './components/CardEntry';
 import OrderConfirmation from './components/OrderConfirmation';
 import OrderActiveSummary from './components/OrderActiveSummary';
+codex/fix-order-confirmation-flow-and-add-backend-ndq693
 import { Order, Restaurant, getActiveOrder, getRestaurants, updateOrderStatus } from './services/api';
+
+import { Order, Restaurant, getActiveOrder, getRestaurants } from './services/api';
+main
 import { restaurants, RestaurantDetails } from './services/restaurantData';
 
 // Default user ID for development
@@ -88,6 +92,7 @@ export default function App() {
     }
   };
 
+codex/fix-order-confirmation-flow-and-add-backend-ndq693
   const cancelActiveOrder = async () => {
     if (!activeOrder) {
       return;
@@ -101,6 +106,7 @@ export default function App() {
     }
   };
 
+main
   const fetchRestaurants = async () => {
     try {
       const data = await getRestaurants();
@@ -119,6 +125,7 @@ export default function App() {
   }, [userId]);
 
   useEffect(() => {
+codex/fix-order-confirmation-flow-and-add-backend-ndq693
     if (!activeOrder) {
       return;
     }
@@ -129,6 +136,8 @@ export default function App() {
   }, [activeOrder]);
 
   useEffect(() => {
+
+main
     fetchRestaurants();
   }, []);
 
