@@ -2,10 +2,11 @@ import { AlertCircle } from 'lucide-react';
 
 interface NewOrderConfirmationModalProps {
   onCancel: () => void;
-  onConfirm: () => void;
+  onConfirmStartNew: () => void;
+  orderNumber?: number;
 }
 
-export default function NewOrderConfirmationModal({ onCancel, onConfirm }: NewOrderConfirmationModalProps) {
+export default function NewOrderConfirmationModal({ onCancel, onConfirmStartNew, orderNumber }: NewOrderConfirmationModalProps) {
   return (
     <div className="absolute inset-0 bg-black/50 flex items-center justify-center p-6 z-50 animate-in fade-in duration-200">
       <div className="bg-white rounded-3xl p-6 w-full max-w-sm space-y-4 animate-in zoom-in-95 duration-200">
@@ -17,11 +18,13 @@ export default function NewOrderConfirmationModal({ onCancel, onConfirm }: NewOr
         </div>
         
         <p className="text-[#6B7280]">
-          This will cancel your existing active order from Proxy. Are you sure you want to continue?
+          This will cancel your existing active order. Are you sure you want to continue?
         </p>
 
         <div className="bg-[#DC2626]/10 border border-[#DC2626]/20 rounded-xl p-3">
-          <p className="text-[#DC2626]">⚠️ Your current order (#314) will be cancelled</p>
+          <p className="text-[#DC2626]">
+            ⚠️ Your current order{orderNumber ? ` (#${orderNumber})` : ''} will be cancelled
+          </p>
         </div>
 
         <div className="flex space-x-3 pt-2">
@@ -32,7 +35,7 @@ export default function NewOrderConfirmationModal({ onCancel, onConfirm }: NewOr
             Cancel
           </button>
           <button
-            onClick={onConfirm}
+            onClick={onConfirmStartNew}
             className="flex-1 py-3 bg-[#DC2626] text-white rounded-xl hover:bg-[#B91C1C] transition-colors active:scale-95"
           >
             Start New

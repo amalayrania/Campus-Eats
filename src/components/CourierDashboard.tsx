@@ -1,18 +1,27 @@
-import { Package, DollarSign, Clock, MapPin, ArrowRight } from 'lucide-react';
+import { Package, DollarSign, Clock, MapPin, ArrowRight, ArrowLeft } from 'lucide-react';
 import { Screen } from '../App';
 import { useState } from 'react';
 
 interface CourierDashboardProps {
   onNavigate: (screen: Screen) => void;
+  onBackToCustomer: () => void;
 }
 
-export default function CourierDashboard({ onNavigate }: CourierDashboardProps) {
+export default function CourierDashboard({ onNavigate, onBackToCustomer }: CourierDashboardProps) {
   const [isOnline, setIsOnline] = useState(false);
 
   return (
     <div className="h-full bg-[#F8F9FA] overflow-y-auto pb-24">
       {/* Header */}
       <div className="bg-gradient-to-br from-[#2D6A4F] to-[#40916C] px-6 pt-12 pb-8 rounded-b-[32px]">
+        {/* Back Button */}
+        <button
+          onClick={onBackToCustomer}
+          className="mb-4 w-10 h-10 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white/20 transition-all active:scale-95"
+        >
+          <ArrowLeft className="w-5 h-5 text-white" />
+        </button>
+
         <h2 className="text-white mb-2">
           Courier Dashboard
         </h2>

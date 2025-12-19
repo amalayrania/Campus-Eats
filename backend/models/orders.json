@@ -1,1 +1,110 @@
-[]
+[
+  {
+    "id": "1766107562394-joigrvjf9",
+    "orderNumber": 1,
+    "userId": "user1",
+    "restaurantId": "1",
+    "items": [
+      {
+        "id": "1",
+        "name": "Cheese Bomb Burger",
+        "price": 50,
+        "quantity": 1
+      }
+    ],
+    "total": 50,
+    "status": "cancelled",
+    "createdAt": "2025-12-19T01:26:02.394Z",
+    "updatedAt": "2025-12-19T01:26:14.270Z"
+  },
+  {
+    "id": "1766107574270-gasxo9hkd",
+    "orderNumber": 2,
+    "userId": "user1",
+    "restaurantId": "1",
+    "items": [
+      {
+        "id": "1",
+        "name": "Cheese Bomb Burger",
+        "price": 50,
+        "quantity": 2
+      }
+    ],
+    "total": 100,
+    "status": "expired",
+    "createdAt": "2025-12-19T01:26:14.270Z",
+    "updatedAt": "2025-12-19T01:27:22.243Z"
+  },
+  {
+    "id": "1766108347063-bixuyn1t7",
+    "orderNumber": 3,
+    "userId": "user1",
+    "restaurantId": "1",
+    "items": [
+      {
+        "id": "1",
+        "name": "Cheese Bomb Burger",
+        "price": 50,
+        "quantity": 1
+      }
+    ],
+    "total": 50,
+    "status": "cancelled",
+    "createdAt": "2025-12-19T01:39:07.063Z",
+    "updatedAt": "2025-12-19T01:39:18.279Z"
+  },
+  {
+    "id": "1766108366792-n3yhzalmj",
+    "orderNumber": 4,
+    "userId": "user1",
+    "restaurantId": "1",
+    "items": [
+      {
+        "id": "1",
+        "name": "Cheese Bomb Burger",
+        "price": 50,
+        "quantity": 1
+      }
+    ],
+    "total": 50,
+    "status": "expired",
+    "createdAt": "2025-12-19T01:39:26.792Z",
+    "updatedAt": "2025-12-19T01:40:45.927Z"
+  },
+  {
+    "id": "1766117139001-ars53piz8",
+    "orderNumber": 5,
+    "userId": "user1",
+    "restaurantId": "proxy",
+    "items": [
+      {
+        "id": "proxy-1",
+        "name": "Shawarma",
+        "price": 45,
+        "quantity": 2
+      }
+    ],
+    "total": 100,
+    "status": "cancelled",
+    "createdAt": "2025-12-19T04:05:39.001Z",
+    "updatedAt": "2025-12-19T04:05:43.375Z"
+  },
+  {
+    "id": "1766117159210-ykpzlbxhy",
+    "orderNumber": 6,
+    "userId": "user1",
+    "restaurantId": "1",
+    "items": [
+      {
+        "id": "1",
+        "name": "Cheese Bomb Burger",
+        "price": 50,
+        "quantity": 1
+      }
+    ],
+    "total": 60,
+    "status": "cancelled",
+    "createdAt": "2025-12-19T04:05:59.210Z",
+    "updatedAt": "2025-12-19T04:06:04.177Z"
+  }
+]
