@@ -13,10 +13,11 @@ interface RestaurantMenuProps {
   onAddToCart: (item: Omit<CartItem, 'quantity'>) => void;
   cartItemCount: number;
   activeOrder?: Order | null;
+  onCancelActiveOrder: () => Promise<void>;
   restaurant: RestaurantDetails;
 }
 
-export default function RestaurantMenu({ onBack, onNavigate, onAddToCart, cartItemCount, activeOrder, restaurant }: RestaurantMenuProps) {
+export default function RestaurantMenu({ onBack, onNavigate, onAddToCart, cartItemCount, activeOrder, onCancelActiveOrder, restaurant }: RestaurantMenuProps) {
   const [activeCategory, setActiveCategory] = useState(restaurant.categories[0]?.name || '');
   const [showNewOrderModal, setShowNewOrderModal] = useState(false);
 
@@ -35,10 +36,6 @@ export default function RestaurantMenu({ onBack, onNavigate, onAddToCart, cartIt
 
   const handleStartNewOrder = () => {
     setShowNewOrderModal(true);
-  };
-
-  const confirmNewOrder = () => {
-    setShowNewOrderModal(false);
   };
 
   return (
@@ -129,8 +126,12 @@ export default function RestaurantMenu({ onBack, onNavigate, onAddToCart, cartIt
       {/* New Order Confirmation Modal */}
       {showNewOrderModal && (
         <NewOrderConfirmationModal
-          onConfirm={confirmNewOrder}
           onCancel={() => setShowNewOrderModal(false)}
+          orderNumber={activeOrder?.orderNumber}
+          onConfirmStartNew={async () => {
+            await onCancelActiveOrder();
+            setShowNewOrderModal(false);
+          }}
         />
       )}
     </div>

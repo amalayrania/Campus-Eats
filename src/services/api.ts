@@ -1,4 +1,5 @@
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+const DEFAULT_TIMEOUT_MS = 8000;
 
 export interface Restaurant {
   id: string;
@@ -31,7 +32,7 @@ export interface Order {
     quantity: number;
   }>;
   total: number;
-  status: 'pending' | 'preparing' | 'ready' | 'picked-up' | 'delivering' | 'delivered';
+  status: 'pending' | 'preparing' | 'ready' | 'picked-up' | 'delivering' | 'delivered' | 'cancelled' | 'expired';
   createdAt: string;
   updatedAt: string;
 }
@@ -53,6 +54,8 @@ export function formatOrderStatus(status: Order['status']): string {
     'picked-up': 'picked up',
     'delivering': 'out for delivery',
     'delivered': 'delivered',
+    'cancelled': 'cancelled',
+    'expired': 'expired',
   };
   return statusMap[status] || status;
 }
@@ -64,6 +67,16 @@ async function handleResponse<T>(response: Response): Promise<T> {
     throw new Error(error.error || `HTTP error! status: ${response.status}`);
   }
   return response.json();
+}
+
+async function fetchWithTimeout(input: RequestInfo, init?: RequestInit, timeoutMs = DEFAULT_TIMEOUT_MS) {
+  const controller = new AbortController();
+  const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    return await fetch(input, { ...init, signal: controller.signal });
+  } finally {
+    window.clearTimeout(timeoutId);
+  }
 }
 
 // Restaurant endpoints
@@ -89,7 +102,7 @@ export async function createOrder(orderData: {
   items: Array<{ id: string; name: string; price: number; quantity: number }>;
   total: number;
 }): Promise<Order> {
-  const response = await fetch(`${API_URL}/api/orders`, {
+  const response = await fetchWithTimeout(`${API_URL}/api/orders`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -115,7 +128,7 @@ export async function getActiveOrder(userId: string): Promise<Order | null> {
 }
 
 export async function updateOrderStatus(id: string, status: Order['status']): Promise<Order> {
-  const response = await fetch(`${API_URL}/api/orders/${id}/status`, {
+  const response = await fetchWithTimeout(`${API_URL}/api/orders/${id}/status`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
@@ -151,6 +164,8 @@ export function getOrderProgress(status: Order['status']): number {
     'picked-up': 80,
     'delivering': 90,
     'delivered': 100,
+    'cancelled': 0,
+    'expired': 0,
   };
   return progressMap[status] || 0;
 }
