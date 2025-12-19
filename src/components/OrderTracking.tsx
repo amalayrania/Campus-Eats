@@ -5,9 +5,10 @@ import { Order } from '../services/api';
 interface OrderTrackingProps {
   onBack: () => void;
   activeOrder: Order | null;
+  onCancelOrder: () => Promise<void>;
 }
 
-export default function OrderTracking({ onBack, activeOrder }: OrderTrackingProps) {
+export default function OrderTracking({ onBack, activeOrder, onCancelOrder }: OrderTrackingProps) {
   const [showCancelModal, setShowCancelModal] = useState(false);
 
   // If no active order, show empty state
@@ -215,7 +216,7 @@ export default function OrderTracking({ onBack, activeOrder }: OrderTrackingProp
           onClick={() => setShowCancelModal(true)}
           className="w-full py-3 border-2 border-[#DC2626] text-[#DC2626] rounded-xl hover:bg-[#DC2626]/5 transition-all active:scale-95"
         >
-          Cancel Order (within 2 minutes)
+          Cancel Order
         </button>
       </div>
 
@@ -235,7 +236,10 @@ export default function OrderTracking({ onBack, activeOrder }: OrderTrackingProp
                 Keep Order
               </button>
               <button
-                onClick={onBack}
+                onClick={async () => {
+                  await onCancelOrder();
+                  setShowCancelModal(false);
+                }}
                 className="flex-1 py-3 bg-[#DC2626] text-white rounded-xl hover:bg-[#B91C1C] transition-colors active:scale-95"
               >
                 Cancel
