@@ -67,20 +67,6 @@ export default function App() {
     []
   );
 
-  const navigateTo = useCallback((screen: Screen) => {
-    setCurrentScreen(screen);
-    
-    // Fetch active order when navigating to home
-    if (screen === 'home') {
-      fetchActiveOrder();
-    }
-  }, [fetchActiveOrder]);
-
-  const openRestaurant = useCallback((restaurant: RestaurantDetails) => {
-    setSelectedRestaurant(restaurant);
-    navigateTo('restaurant');
-  }, [navigateTo]);
-
   const fetchActiveOrder = useCallback(async () => {
     try {
       const order = await api.getActiveOrder(userId);
@@ -90,6 +76,18 @@ export default function App() {
       setActiveOrder(null);
     }
   }, [userId]);
+
+  const navigateTo = useCallback((screen: Screen) => {
+    setCurrentScreen(screen);
+    if (screen === 'home') {
+      fetchActiveOrder();
+    }
+  }, [fetchActiveOrder]);
+
+  const openRestaurant = useCallback((restaurant: RestaurantDetails) => {
+    setSelectedRestaurant(restaurant);
+    navigateTo('restaurant');
+  }, [navigateTo]);
 
   const cancelActiveOrder = useCallback(async () => {
     if (!activeOrder) {
@@ -114,7 +112,6 @@ export default function App() {
     }
   }, [mapRestaurantToDetails]);
 
-  // Fetch active order on mount if already on home screen
   useEffect(() => {
     if (currentScreen === 'home') {
       fetchActiveOrder();
@@ -129,7 +126,7 @@ export default function App() {
       fetchActiveOrder();
     }, 60_000);
     return () => window.clearTimeout(timeoutId);
-  }, [activeOrder]);
+  }, [activeOrder, fetchActiveOrder]);
 
   useEffect(() => {
     fetchRestaurants();
