@@ -67,20 +67,6 @@ export default function App() {
     []
   );
 
-  const navigateTo = useCallback((screen: Screen) => {
-    setCurrentScreen(screen);
-    
-    // Fetch active order when navigating to home
-    if (screen === 'home') {
-      fetchActiveOrder();
-    }
-  }, [fetchActiveOrder]);
-
-  const openRestaurant = useCallback((restaurant: RestaurantDetails) => {
-    setSelectedRestaurant(restaurant);
-    navigateTo('restaurant');
-  }, [navigateTo]);
-
   const fetchActiveOrder = useCallback(async () => {
     try {
       const order = await getActiveOrder(userId);
@@ -90,6 +76,18 @@ export default function App() {
       setActiveOrder(null);
     }
   }, [userId]);
+
+  const navigateTo = useCallback((screen: Screen) => {
+    setCurrentScreen(screen);
+    if (screen === 'home') {
+      fetchActiveOrder();
+    }
+  }, [fetchActiveOrder]);
+
+  const openRestaurant = useCallback((restaurant: RestaurantDetails) => {
+    setSelectedRestaurant(restaurant);
+    navigateTo('restaurant');
+  }, [navigateTo]);
 
   const cancelActiveOrder = useCallback(async () => {
     if (!activeOrder) {
@@ -114,7 +112,6 @@ export default function App() {
     }
   }, [mapRestaurantToDetails]);
 
-  // Fetch active order on mount if already on home screen
   useEffect(() => {
     if (currentScreen === 'home') {
       fetchActiveOrder();
@@ -129,7 +126,7 @@ export default function App() {
       fetchActiveOrder();
     }, 60_000);
     return () => window.clearTimeout(timeoutId);
-  }, [activeOrder]);
+  }, [activeOrder, fetchActiveOrder]);
 
   useEffect(() => {
     fetchRestaurants();
@@ -174,122 +171,3 @@ export default function App() {
     setActiveOrder(order);
     clearCart();
   }, [clearCart]);
-
-  const cartTotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-
-  return (
-    <div className="min-h-screen bg-[#F8F9FA] flex items-center justify-center p-4">
-      <div className="w-full max-w-[430px] min-h-[932px] bg-white rounded-[40px] shadow-2xl overflow-hidden relative">
-        {currentScreen === 'splash' && (
-          <SplashScreen onContinue={() => navigateTo('login')} />
-        )}
-        {currentScreen === 'login' && (
-          <LoginScreen 
-            onLogin={() => navigateTo('home')}
-            onCourierLogin={() => {
-              setIsCourierMode(true);
-              navigateTo('courier-dashboard');
-            }}
-          />
-        )}
-        {currentScreen === 'home' && (
-          <HomeScreen
-            onNavigate={navigateTo}
-            restaurants={restaurantsList}
-            onSelectRestaurant={openRestaurant}
-            cartItemCount={cartItems.length}
-            onAddToCart={addToCart}
-            activeOrder={activeOrder}
-          />
-        )}
-        {currentScreen === 'restaurant' && (
-          <RestaurantMenu
-            onBack={() => navigateTo('home')}
-            onNavigate={navigateTo}
-            onAddToCart={addToCart}
-            cartItemCount={cartItems.length}
-            activeOrder={activeOrder}
-            onCancelActiveOrder={cancelActiveOrder}
-            restaurant={selectedRestaurant}
-          />
-        )}
-        {currentScreen === 'cart' && (
-          <CartScreen 
-            onBack={() => navigateTo('restaurant')}
-            onNavigate={navigateTo}
-            cartItems={cartItems}
-            onUpdateQuantity={updateQuantity}
-            onClearCart={clearCart}
-          />
-        )}
-        {currentScreen === 'tracking' && (
-          <OrderTracking 
-            onBack={() => navigateTo('home')} 
-            activeOrder={activeOrder}
-            onCancelOrder={async () => {
-              await cancelActiveOrder();
-              navigateTo('home');
-            }}
-          />
-        )}
-        {currentScreen === 'profile' && (
-          <ProfileSettings 
-            onBack={() => navigateTo('home')}
-            isCourierMode={isCourierMode}
-            onToggleCourierMode={() => {
-              setIsCourierMode(!isCourierMode);
-              navigateTo(isCourierMode ? 'home' : 'courier-dashboard');
-            }}
-          />
-        )}
-        {currentScreen === 'courier-dashboard' && (
-          <CourierDashboard onNavigate={navigateTo} />
-        )}
-        {currentScreen === 'courier-pickup' && (
-          <CourierPickup 
-            onBack={() => navigateTo('courier-dashboard')}
-            onNavigate={navigateTo}
-          />
-        )}
-        {currentScreen === 'courier-delivery' && (
-          <CourierDelivery 
-            onBack={() => navigateTo('courier-pickup')}
-            onNavigate={navigateTo}
-          />
-        )}
-        {currentScreen === 'payment-selection' && (
-          <PaymentSelection
-            onBack={() => navigateTo('cart')}
-            onNavigate={navigateTo}
-            totalAmount={cartTotal}
-            onSelectPayment={setPaymentMethod}
-          />
-        )}
-        {currentScreen === 'card-entry' && (
-          <CardEntry 
-            onBack={() => navigateTo('payment-selection')}
-            onNavigate={navigateTo}
-            totalAmount={cartTotal}
-          />
-        )}
-        {currentScreen === 'order-confirmation' && (
-          <OrderConfirmation 
-            onNavigate={navigateTo}
-            totalAmount={cartTotal}
-            paymentMethod={paymentMethod}
-            cartItems={cartItems}
-            userId={userId}
-            restaurantId={selectedRestaurant.id}
-            onOrderCreated={handleOrderCreated}
-          />
-        )}
-        {currentScreen === 'order-active-summary' && (
-          <OrderActiveSummary 
-            onBack={() => navigateTo('restaurant')}
-            onNavigate={navigateTo}
-          />
-        )}
-      </div>
-    </div>
-  );
-}
