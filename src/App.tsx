@@ -1,3 +1,11 @@
+// ============================================
+// MAIN APPLICATION COMPONENT
+// Demonstrates Layered Architecture (Usability ASR)
+// - Presentation Layer: React Components
+// - Application Layer: Business Logic
+// - Data Layer: API Services
+// ============================================
+
 import { useState, useEffect, useCallback } from 'react';
 import SplashScreen from './components/SplashScreen';
 import LoginScreen from './components/LoginScreen';
@@ -18,6 +26,9 @@ import { restaurants, RestaurantDetails } from './services/restaurantData';
 
 // Default user ID for development
 const DEFAULT_USER_ID = 'user1';
+
+// Constants
+const DELIVERY_FEE = 10; // MAD
 
 export type Screen = 
   | 'splash' 
@@ -56,7 +67,13 @@ export default function App() {
   const mapRestaurantToDetails = useCallback(
     (restaurant: api.Restaurant): RestaurantDetails => ({
       ...restaurant,
+      id: restaurant.id,
+      name: restaurant.name,
+      image: restaurant.image,
       heroImage: restaurant.image,
+      rating: restaurant.rating,
+      time: restaurant.time,
+      description: restaurant.description,
       categories: [
         {
           name: 'Menu',
@@ -172,7 +189,9 @@ export default function App() {
     clearCart();
   }, [clearCart]);
 
+  // Calculate totals
   const cartTotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const orderTotal = cartTotal + DELIVERY_FEE; // Include delivery fee
 
   return (
     <div className="min-h-screen bg-[#F8F9FA] flex items-center justify-center p-4">
@@ -240,7 +259,13 @@ export default function App() {
           />
         )}
         {currentScreen === 'courier-dashboard' && (
-          <CourierDashboard onNavigate={navigateTo} />
+          <CourierDashboard 
+            onNavigate={navigateTo}
+            onBackToCustomer={() => {
+              setIsCourierMode(false);
+              navigateTo('home');
+            }}
+          />
         )}
         {currentScreen === 'courier-pickup' && (
           <CourierPickup 
@@ -258,7 +283,7 @@ export default function App() {
           <PaymentSelection
             onBack={() => navigateTo('cart')}
             onNavigate={navigateTo}
-            totalAmount={cartTotal}
+            totalAmount={orderTotal}  // ✅ Now includes delivery fee
             onSelectPayment={setPaymentMethod}
           />
         )}
@@ -266,13 +291,13 @@ export default function App() {
           <CardEntry 
             onBack={() => navigateTo('payment-selection')}
             onNavigate={navigateTo}
-            totalAmount={cartTotal}
+            totalAmount={orderTotal}  // ✅ Now includes delivery fee
           />
         )}
         {currentScreen === 'order-confirmation' && (
           <OrderConfirmation 
             onNavigate={navigateTo}
-            totalAmount={cartTotal}
+            totalAmount={orderTotal}  // ✅ Now includes delivery fee
             paymentMethod={paymentMethod}
             cartItems={cartItems}
             userId={userId}

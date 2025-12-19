@@ -1,6 +1,6 @@
 import { CheckCircle, Package, MapPin, Clock, AlertTriangle } from 'lucide-react';
 import { Screen, CartItem } from '../App';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { createOrder, Order } from '../services/api';
 
 interface OrderConfirmationProps {
@@ -26,6 +26,7 @@ export default function OrderConfirmation({
   const [createdOrder, setCreatedOrder] = useState<Order | null>(null);
   const [isCreating, setIsCreating] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const hasPlacedOrder = useRef(false); // CRITICAL FIX: Prevent infinite loop
 
   const buildFallbackOrder = () => {
     const now = new Date().toISOString();
@@ -41,10 +42,10 @@ export default function OrderConfirmation({
         quantity: item.quantity
       })),
       total: totalAmount,
-      status: 'pending',
+      status: 'pending' as const,
       createdAt: now,
       updatedAt: now
-    } satisfies Order;
+    };
   };
 
   useEffect(() => {
@@ -54,40 +55,55 @@ export default function OrderConfirmation({
     return () => clearTimeout(timer);
   }, []);
 
-  const placeOrder = useCallback(async () => {
-    try {
-      setError(null);
-      setIsCreating(true);
-      const orderData = {
-        userId,
-        restaurantId,
-        items: cartItems.map(item => ({
-          id: item.id,
-          name: item.name,
-          price: item.price,
-          quantity: item.quantity
-        })),
-        total: totalAmount
-      };
-
-      const order = await createOrder(orderData);
-      setCreatedOrder(order);
-      onOrderCreated(order);
-    } catch (error) {
-      console.error('Failed to create order:', error);
-      const fallbackOrder = buildFallbackOrder();
-      setCreatedOrder(fallbackOrder);
-      onOrderCreated(fallbackOrder);
-      setError(null);
-    } finally {
-      setIsCreating(false);
-    }
-  }, [cartItems, onOrderCreated, restaurantId, totalAmount, userId]);
-
-  // Create order on mount
+  // CRITICAL FIX: Only place order once using useRef
   useEffect(() => {
+    if (hasPlacedOrder.current) {
+      return;
+    }
+    
+    hasPlacedOrder.current = true;
+
+    const placeOrder = async () => {
+      try {
+        setError(null);
+        setIsCreating(true);
+        const orderData = {
+          userId,
+          restaurantId,
+          items: cartItems.map(item => ({
+            id: item.id,
+            name: item.name,
+            price: item.price,
+            quantity: item.quantity
+          })),
+          total: totalAmount
+        };
+
+        const order = await createOrder(orderData);
+        setCreatedOrder(order);
+        onOrderCreated(order);
+      } catch (error) {
+        console.error('Failed to create order:', error);
+        const fallbackOrder = buildFallbackOrder();
+        setCreatedOrder(fallbackOrder);
+        onOrderCreated(fallbackOrder);
+        setError(null);
+      } finally {
+        setIsCreating(false);
+      }
+    };
+
     placeOrder();
-  }, [placeOrder]);
+  }, []); // Empty deps - only run once on mount
+
+  const handleRetry = () => {
+    hasPlacedOrder.current = false;
+    setIsCreating(true);
+    setError(null);
+    
+    // Trigger useEffect to run again
+    window.location.reload();
+  };
 
   // Show loading state while creating order
   if (isCreating) {
@@ -111,7 +127,7 @@ export default function OrderConfirmation({
         </div>
         <div className="w-full space-y-3">
           <button
-            onClick={placeOrder}
+            onClick={handleRetry}
             className="w-full bg-[#2D6A4F] text-white rounded-2xl py-4 shadow-lg shadow-[#2D6A4F]/30 hover:bg-[#40916C] transition-all active:scale-95"
           >
             Retry order

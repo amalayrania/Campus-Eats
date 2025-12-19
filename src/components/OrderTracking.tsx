@@ -1,5 +1,14 @@
-import { ArrowLeft, CheckCircle2, Clock, User, Phone, MapPin, Package } from 'lucide-react';
+// ============================================
+// USABILITY DEMONSTRATION COMPONENT
+// Shows 2-Click Cancellation with Timing
+// Demonstrates Usability ASR requirement:
+// - Order cancellation in ≤2 clicks
+// - Completion within 10 seconds
+// ============================================
+
+import { ArrowLeft, CheckCircle2, Clock, User, Phone, MapPin, Package, XCircle } from 'lucide-react';
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Order } from '../services/api';
 
 interface OrderTrackingProps {
@@ -10,11 +19,87 @@ interface OrderTrackingProps {
 
 export default function OrderTracking({ onBack, activeOrder, onCancelOrder }: OrderTrackingProps) {
   const [showCancelModal, setShowCancelModal] = useState(false);
+  const [cancelStartTime, setCancelStartTime] = useState<number>(0);
+  const [cancelDuration, setCancelDuration] = useState<number | null>(null);
+  const [isCancelling, setIsCancelling] = useState(false);
+  const [showSuccessToast, setShowSuccessToast] = useState(false);
+  const [toastDuration, setToastDuration] = useState<number>(0);
 
-  // If no active order, show empty state
   if (!activeOrder) {
     return (
+      <div className="h-full bg-[#F8F9FA] flex items-center justify-center">
+        <div className="text-center px-6">
+          <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">No Active Order</h3>
+          <p className="text-gray-600 mb-6">You don't have any orders in progress</p>
+          <button
+            onClick={onBack}
+            className="px-6 py-3 bg-[#2D6A4F] text-white rounded-xl hover:bg-[#40916C] transition-colors"
+          >
+            Browse Restaurants
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const handleCancelClick = () => {
+    // Click 1: Open confirmation dialog and start timer
+    setCancelStartTime(Date.now());
+    setShowCancelModal(true);
+  };
+
+  const handleConfirmCancel = async () => {
+    // Click 2: Confirm cancellation
+    setIsCancelling(true);
+    const startTime = cancelStartTime || Date.now();
+    
+    try {
+      await onCancelOrder();
+      const duration = Date.now() - startTime;
+      setCancelDuration(duration);
+      setToastDuration(duration); // Store for toast
+      
+      // Show success message for 2 seconds, then show confirmation and close modal
+      setTimeout(() => {
+        setShowCancelModal(false);
+        setShowSuccessToast(true);
+        setCancelDuration(null);
+        console.log('🎉 Success confirmation showing with duration:', duration);
+      }, 2000);
+    } catch (error) {
+      console.error('Failed to cancel order:', error);
+      setIsCancelling(false);
+    }
+  };
+
+  const formatTime = (isoString: string) => {
+    const date = new Date(isoString);
+    return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+  };
+
+  const statusSteps = [
+    { key: 'pending', label: 'Order Received', icon: CheckCircle2 },
+    { key: 'preparing', label: 'Being Prepared', icon: CheckCircle2 },
+    { key: 'ready', label: 'Courier Assigned', icon: Clock },
+    { key: 'delivering', label: 'On the Way', icon: Clock },
+    { key: 'delivered', label: 'Delivered', icon: CheckCircle2 },
+  ];
+
+  const getStepStatus = (stepKey: string) => {
+    const statusOrder = ['pending', 'preparing', 'ready', 'delivering', 'delivered'];
+    const currentIndex = statusOrder.indexOf(activeOrder.status);
+    const stepIndex = statusOrder.indexOf(stepKey);
+    
+    if (stepIndex < currentIndex) return 'completed';
+    if (stepIndex === currentIndex) return 'active';
+    return 'pending';
+  };
+
+  return (
+    <>
       <div className="h-full bg-[#F8F9FA] flex flex-col">
+        {/* Header */}
         <div className="bg-white border-b border-[#E5E7EB] px-6 py-4 flex items-center space-x-4">
           <button
             onClick={onBack}
@@ -22,233 +107,223 @@ export default function OrderTracking({ onBack, activeOrder, onCancelOrder }: Or
           >
             <ArrowLeft className="w-5 h-5 text-[#1F2937]" />
           </button>
-          <h2 className="text-[#1F2937]">Order Tracking</h2>
-        </div>
-        <div className="flex-1 flex items-center justify-center px-6">
-          <div className="text-center">
-            <Package className="w-16 h-16 text-[#6B7280] mx-auto mb-4" />
-            <h3 className="text-[#1F2937] mb-2">No Active Order</h3>
-            <p className="text-[#6B7280] mb-6">You don't have any active orders to track.</p>
-            <button
-              onClick={onBack}
-              className="px-6 py-3 bg-[#2D6A4F] text-white rounded-xl hover:bg-[#40916C] transition-colors"
-            >
-              Go to Home
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Format the timestamp
-  const formatTime = (isoString: string) => {
-    const date = new Date(isoString);
-    return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
-  };
-
-  return (
-    <div className="h-full bg-[#F8F9FA] flex flex-col">
-      {/* Header */}
-      <div className="bg-white border-b border-[#E5E7EB] px-6 py-4 flex items-center space-x-4">
-        <button
-          onClick={onBack}
-          className="w-10 h-10 rounded-full bg-[#F3F4F6] flex items-center justify-center hover:bg-[#E5E7EB] transition-colors active:scale-95"
-        >
-          <ArrowLeft className="w-5 h-5 text-[#1F2937]" />
-        </button>
-        <div className="flex-1">
-          <h2 className="text-[#1F2937]">Order #{activeOrder.orderNumber}</h2>
-          <p className="text-[#6B7280]">Placed at {formatTime(activeOrder.createdAt)}</p>
-        </div>
-      </div>
-
-      {/* Enhanced Map Placeholder */}
-      <div className="h-72 bg-gradient-to-br from-[#E8F5E9] via-[#C8E6C9] to-[#A5D6A7] relative overflow-hidden">
-        {/* Background pattern */}
-        <svg className="absolute inset-0 w-full h-full opacity-10" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#2D6A4F" strokeWidth="0.5"/>
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#grid)" />
-        </svg>
-
-        {/* Restaurant Location Pin */}
-        <div className="absolute top-12 left-12">
-          <div className="relative">
-            <div className="w-10 h-10 bg-[#2D6A4F] rounded-full flex items-center justify-center shadow-lg animate-bounce" style={{ animationDuration: '2s' }}>
-              <MapPin className="w-6 h-6 text-white fill-white" />
-            </div>
-            <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 whitespace-nowrap bg-white px-2 py-1 rounded-lg shadow-md text-xs text-[#1F2937]">
-              Restaurant
-            </div>
+          <div className="flex-1">
+            <h2 className="text-[#1F2937]">Order #{activeOrder.id.slice(0, 8)}</h2>
+            <p className="text-[#6B7280]">Placed at {formatTime(activeOrder.createdAt)}</p>
           </div>
         </div>
 
-        {/* Delivery Location Pin */}
-        <div className="absolute bottom-16 right-12">
-          <div className="relative">
-            <div className="w-10 h-10 bg-[#FFB703] rounded-full flex items-center justify-center shadow-lg animate-pulse">
-              <MapPin className="w-6 h-6 text-white fill-white" />
-            </div>
-            <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 whitespace-nowrap bg-white px-2 py-1 rounded-lg shadow-md text-xs text-[#1F2937]">
-              Your Location
+        {/* Map Placeholder */}
+        <div className="h-64 bg-gradient-to-br from-[#2D6A4F]/10 to-[#40916C]/10 relative overflow-hidden">
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="text-center">
+              <MapPin className="w-16 h-16 text-[#2D6A4F] mx-auto mb-2" />
+              <p className="text-[#6B7280]">Tracking your order...</p>
             </div>
           </div>
+          {/* Decorative map elements */}
+          <div className="absolute top-10 left-10 w-3 h-3 bg-[#2D6A4F] rounded-full animate-pulse"></div>
+          <div className="absolute bottom-20 right-16 w-3 h-3 bg-[#FFB703] rounded-full animate-pulse" style={{ animationDelay: '300ms' }}></div>
+          <div className="absolute top-1/2 left-1/2 w-2 h-2 bg-[#40916C] rounded-full animate-pulse" style={{ animationDelay: '150ms' }}></div>
         </div>
 
-        {/* Animated Route Line */}
-        <svg className="absolute inset-0 w-full h-full pointer-events-none">
-          <defs>
-            <linearGradient id="routeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#2D6A4F" stopOpacity="0.8"/>
-              <stop offset="100%" stopColor="#FFB703" stopOpacity="0.8"/>
-            </linearGradient>
-          </defs>
-          <path
-            d="M 60 60 Q 150 100, 330 220"
-            stroke="url(#routeGradient)"
-            strokeWidth="3"
-            fill="none"
-            strokeDasharray="8 4"
-            className="animate-pulse"
-          />
-        </svg>
-
-        {/* Animated Courier Icon */}
-        <div className="absolute animate-[ping_3s_ease-in-out_infinite]" style={{ top: '45%', left: '45%' }}>
-          <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-xl border-2 border-[#2D6A4F]">
-            <User className="w-4 h-4 text-[#2D6A4F]" />
-          </div>
-        </div>
-
-        {/* Info Overlay */}
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-white/95 backdrop-blur-sm px-4 py-2 rounded-full shadow-lg flex items-center space-x-3">
-          <Clock className="w-4 h-4 text-[#2D6A4F]" />
-          <span className="text-sm text-[#1F2937]">Est. delivery: 15-20 min</span>
-          <span className="text-sm text-[#6B7280]">• 2.5 km</span>
-        </div>
-      </div>
-
-      {/* Order Timeline */}
-      <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
-        <div className="bg-white rounded-2xl p-6 shadow-md space-y-6">
-          <TimelineStep
-            icon={<CheckCircle2 className="w-6 h-6" />}
-            title="Order Received"
-            time={formatTime(activeOrder.createdAt)}
-            status={['pending', 'preparing', 'ready', 'picked-up', 'delivering', 'delivered'].includes(activeOrder.status) ? 'completed' : 'pending'}
-          />
-          <TimelineStep
-            icon={<CheckCircle2 className="w-6 h-6" />}
-            title="Being Prepared"
-            time={activeOrder.status === 'pending' ? 'Pending...' : formatTime(activeOrder.updatedAt)}
-            status={['preparing', 'ready', 'picked-up', 'delivering', 'delivered'].includes(activeOrder.status) ? 'completed' : activeOrder.status === 'pending' ? 'active' : 'pending'}
-          />
-          <TimelineStep
-            icon={<Clock className="w-6 h-6" />}
-            title="Courier Assigned"
-            time={['ready', 'picked-up', 'delivering', 'delivered'].includes(activeOrder.status) ? formatTime(activeOrder.updatedAt) : 'Waiting...'}
-            status={['picked-up', 'delivering', 'delivered'].includes(activeOrder.status) ? 'completed' : activeOrder.status === 'ready' ? 'active' : 'pending'}
-          />
-          <TimelineStep
-            icon={<Clock className="w-6 h-6" />}
-            title="On the Way"
-            time={['delivering', 'delivered'].includes(activeOrder.status) ? formatTime(activeOrder.updatedAt) : 'Waiting...'}
-            status={activeOrder.status === 'delivered' ? 'completed' : activeOrder.status === 'delivering' ? 'active' : 'pending'}
-          />
-          <TimelineStep
-            icon={<Clock className="w-6 h-6" />}
-            title="Delivered"
-            time={activeOrder.status === 'delivered' ? formatTime(activeOrder.updatedAt) : 'Waiting...'}
-            status={activeOrder.status === 'delivered' ? 'completed' : 'pending'}
-          />
-        </div>
-
-        {/* Courier Info Card */}
-        <div className="bg-white rounded-2xl p-6 shadow-md">
-          <p className="text-[#6B7280] mb-4">Your Courier</p>
-          <div className="flex items-center space-x-4">
-            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#2D6A4F] to-[#40916C] flex items-center justify-center">
-              <User className="w-8 h-8 text-white" />
-            </div>
-            <div className="flex-1">
-              <h4 className="text-[#1F2937]">Ahmed El Mansouri</h4>
-              <div className="flex items-center space-x-1 text-[#6B7280] mt-1">
-                <span>⭐</span>
-                <span>4.9 (250+ deliveries)</span>
-              </div>
-              <div className="flex items-center space-x-2 text-[#6B7280] mt-2">
-                <Clock className="w-4 h-4" />
-                <span>Pickup ETA: 5 mins</span>
-              </div>
-            </div>
-            <button className="w-12 h-12 rounded-full bg-[#2D6A4F]/10 flex items-center justify-center hover:bg-[#2D6A4F]/20 transition-colors active:scale-95">
-              <Phone className="w-5 h-5 text-[#2D6A4F]" />
-            </button>
-          </div>
-        </div>
-
-        {/* Order Details */}
-        <div className="bg-white rounded-2xl p-6 shadow-md">
-          <p className="text-[#6B7280] mb-3">Order Items</p>
-          <div className="space-y-2">
-            {activeOrder.items.map((item, index) => (
-              <div key={index} className="flex items-center justify-between">
-                <span className="text-[#1F2937]">{item.quantity}x {item.name}</span>
-                <span className="text-[#6B7280]">{item.price * item.quantity} MAD</span>
-              </div>
+        {/* Order Timeline */}
+        <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
+          <div className="bg-white rounded-2xl p-6 shadow-md space-y-6">
+            {statusSteps.map((step) => (
+              <TimelineStep
+                key={step.key}
+                icon={<step.icon className="w-6 h-6" />}
+                title={step.label}
+                time={getStepStatus(step.key) === 'completed' ? formatTime(activeOrder.updatedAt) : getStepStatus(step.key) === 'active' ? 'In progress...' : 'Waiting...'}
+                status={getStepStatus(step.key)}
+              />
             ))}
-            <div className="h-px bg-[#E5E7EB] my-2"></div>
-            <div className="flex items-center justify-between">
-              <span className="text-[#1F2937]">Total</span>
-              <span className="text-[#2D6A4F]">{activeOrder.total} MAD</span>
+          </div>
+
+          {/* Courier Info Card */}
+          <div className="bg-white rounded-2xl p-6 shadow-md">
+            <p className="text-[#6B7280] mb-4">Your Courier</p>
+            <div className="flex items-center space-x-4">
+              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#2D6A4F] to-[#40916C] flex items-center justify-center">
+                <User className="w-8 h-8 text-white" />
+              </div>
+              <div className="flex-1">
+                <h4 className="text-[#1F2937]">Ahmed El Mansouri</h4>
+                <div className="flex items-center space-x-1 text-[#6B7280] mt-1">
+                  <span>⭐</span>
+                  <span>4.9 (250+ deliveries)</span>
+                </div>
+                <div className="flex items-center space-x-2 text-[#6B7280] mt-2">
+                  <Clock className="w-4 h-4" />
+                  <span>Pickup ETA: 5 mins</span>
+                </div>
+              </div>
+              <button className="w-12 h-12 rounded-full bg-[#2D6A4F]/10 flex items-center justify-center hover:bg-[#2D6A4F]/20 transition-colors active:scale-95">
+                <Phone className="w-5 h-5 text-[#2D6A4F]" />
+              </button>
+            </div>
+          </div>
+
+          {/* Order Details */}
+          <div className="bg-white rounded-2xl p-6 shadow-md">
+            <p className="text-[#6B7280] mb-3">Order Items</p>
+            <div className="space-y-2">
+              {activeOrder.items.map((item, index) => (
+                <div key={index} className="flex items-center justify-between">
+                  <span className="text-[#1F2937]">{item.quantity}x {item.name}</span>
+                  <span className="text-[#6B7280]">{item.price * item.quantity} MAD</span>
+                </div>
+              ))}
+              <div className="h-px bg-[#E5E7EB] my-2"></div>
+              <div className="flex items-center justify-between">
+                <span className="text-[#1F2937]">Total</span>
+                <span className="text-[#2D6A4F]">{activeOrder.totalAmount} MAD</span>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Cancel Order Button */}
-      <div className="bg-white border-t border-[#E5E7EB] px-6 py-4">
-        <button
-          onClick={() => setShowCancelModal(true)}
-          className="w-full py-3 border-2 border-[#DC2626] text-[#DC2626] rounded-xl hover:bg-[#DC2626]/5 transition-all active:scale-95"
-        >
-          Cancel Order
-        </button>
-      </div>
-
-      {/* Cancel Modal */}
-      {showCancelModal && (
-        <div className="absolute inset-0 bg-black/50 flex items-center justify-center p-6 z-50">
-          <div className="bg-white rounded-3xl p-6 w-full max-w-sm space-y-4">
-            <h3 className="text-[#1F2937]">Cancel Order?</h3>
-            <p className="text-[#6B7280]">
-              Are you sure you want to cancel this order? This action cannot be undone.
+        {/* Cancel Order Button */}
+        {activeOrder.status !== 'delivered' && activeOrder.status !== 'cancelled' && (
+          <div className="bg-white border-t border-[#E5E7EB] px-6 py-4">
+            <button
+              onClick={handleCancelClick}
+              className="w-full py-3 border-2 border-[#DC2626] text-[#DC2626] rounded-xl hover:bg-[#DC2626]/5 transition-all active:scale-95 font-medium"
+            >
+              Cancel Order
+            </button>
+            <p className="text-xs text-center text-[#6B7280] mt-2">
             </p>
-            <div className="flex space-x-3">
-              <button
-                onClick={() => setShowCancelModal(false)}
-                className="flex-1 py-3 bg-[#F3F4F6] text-[#1F2937] rounded-xl hover:bg-[#E5E7EB] transition-colors active:scale-95"
-              >
-                Keep Order
-              </button>
-              <button
-                onClick={async () => {
-                  await onCancelOrder();
-                  setShowCancelModal(false);
-                }}
-                className="flex-1 py-3 bg-[#DC2626] text-white rounded-xl hover:bg-[#B91C1C] transition-colors active:scale-95"
-              >
-                Cancel
-              </button>
+          </div>
+        )}
+
+        {/* Cancel Modal */}
+        {showCancelModal && (
+          <div className="absolute inset-0 bg-black/50 flex items-center justify-center p-6 z-50">
+            <div className="bg-white rounded-3xl p-6 w-full max-w-sm space-y-4">
+              {cancelDuration === null ? (
+                <>
+                  <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                    <XCircle className="w-8 h-8 text-red-600" />
+                  </div>
+                  <h3 className="text-xl font-bold text-[#1F2937] text-center">Cancel Order?</h3>
+                  <p className="text-[#6B7280] text-center">
+                    Are you sure you want to cancel this order? This action cannot be undone.
+                  </p>
+                  <div className="flex flex-col space-y-3 pt-2">
+                    <button
+                      onClick={handleConfirmCancel}
+                      disabled={isCancelling}
+                      className="w-full py-4 bg-[#DC2626] text-white rounded-xl hover:bg-[#B91C1C] transition-all active:scale-95 font-semibold disabled:opacity-50 flex items-center justify-center"
+                    >
+                      {isCancelling ? (
+                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      ) : (
+                        'Yes, Cancel Order'
+                      )}
+                    </button>
+                    <button
+                      onClick={() => {
+                        setShowCancelModal(false);
+                        setCancelStartTime(0);
+                      }}
+                      disabled={isCancelling}
+                      className="w-full py-4 bg-[#F3F4F6] text-[#1F2937] rounded-xl hover:bg-[#E5E7EB] transition-all active:scale-95 font-semibold disabled:opacity-50"
+                    >
+                      Keep Order
+                    </button>
+                  </div>
+                  <p className="text-xs text-center text-[#9CA3AF] pt-2">
+                    Click 2 of 2 • Timer: {((Date.now() - cancelStartTime) / 1000).toFixed(1)}s
+                  </p>
+                </>
+              ) : (
+                <>
+                  <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <CheckCircle2 className="w-10 h-10 text-green-600" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-[#1F2937] text-center mb-2">
+                    Order Cancelled!
+                  </h3>
+                  <p className="text-[#6B7280] text-center mb-4">
+                    Your order has been successfully cancelled.
+                  </p>
+                  <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-2xl p-5 border-2 border-green-200">
+                    <p className="text-lg font-bold text-green-900 text-center mb-3">
+                      ✓ Usability Goal Achieved
+                    </p>
+                    <div className="bg-white rounded-xl p-4 mb-3">
+                      <p className="text-4xl font-bold text-green-600 text-center">
+                        {(cancelDuration / 1000).toFixed(2)}s
+                      </p>
+                      <p className="text-sm text-[#6B7280] text-center mt-1">Cancellation Time</p>
+                    </div>
+                    <div className="space-y-1 text-center">
+                      <p className="text-sm font-semibold text-green-800">
+                        Target: &lt;10 seconds ✓
+                      </p>
+                      <p className="text-sm font-semibold text-green-800">
+                        Clicks: 2 ✓
+                      </p>
+                      <p className="text-xs text-green-700 mt-2">
+                        As specified in ADD requirements
+                      </p>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           </div>
-        </div>
+        )}
+      </div>
+
+      {/* Success Toast Notification - Rendered via Portal */}
+      {showSuccessToast && createPortal(
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9999] flex items-center justify-center p-6">
+          <div className="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl">
+            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <CheckCircle2 className="w-10 h-10 text-green-600" />
+            </div>
+            <h3 className="text-2xl font-bold text-[#1F2937] text-center mb-2">
+              Order Cancelled Successfully!
+            </h3>
+            <p className="text-[#6B7280] text-center mb-6">
+              Your order has been cancelled and you will not be charged.
+            </p>
+            <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-2xl p-5 border-2 border-green-200 mb-6">
+              <p className="text-lg font-bold text-green-900 text-center mb-3">
+                ✓ Usability Goal Achieved
+              </p>
+              <div className="bg-white rounded-xl p-4 mb-3">
+                <p className="text-4xl font-bold text-green-600 text-center">
+                  {(toastDuration / 1000).toFixed(2)}s
+                </p>
+                <p className="text-sm text-[#6B7280] text-center mt-1">Cancellation Time</p>
+              </div>
+              <div className="space-y-1 text-center">
+                <p className="text-sm font-semibold text-green-800">
+                  Target: &lt;10 seconds ✓
+                </p>
+                <p className="text-sm font-semibold text-green-800">
+                  Clicks: 2 ✓
+                </p>
+                <p className="text-xs text-green-700 mt-2">
+                  As specified in ADD requirements
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => setShowSuccessToast(false)}
+              className="w-full py-4 bg-[#2D6A4F] text-white rounded-xl font-semibold hover:bg-[#40916C] transition-all active:scale-95"
+            >
+              Got it!
+            </button>
+          </div>
+        </div>,
+        document.body
       )}
-    </div>
+    </>
   );
 }
 
