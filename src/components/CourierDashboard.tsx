@@ -1,14 +1,53 @@
 import { Package, DollarSign, Clock, MapPin, ArrowRight, ArrowLeft } from 'lucide-react';
 import { Screen } from '../App';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface CourierDashboardProps {
   onNavigate: (screen: Screen) => void;
   onBackToCustomer: () => void;
+  userId?: string;
 }
 
-export default function CourierDashboard({ onNavigate, onBackToCustomer }: CourierDashboardProps) {
+interface CourierStats {
+  deliveries: number;
+  earnings: number;
+  avgTime: number;
+}
+
+export default function CourierDashboard({ onNavigate, onBackToCustomer, userId = 'courier1' }: CourierDashboardProps) {
   const [isOnline, setIsOnline] = useState(false);
+  const [stats, setStats] = useState<CourierStats>({
+    deliveries: 0,
+    earnings: 0,
+    avgTime: 0
+  });
+
+  // Fetch courier stats from backend
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+        const response = await fetch(`${API_URL}/api/courier-stats/${userId}`);
+        if (response.ok) {
+          const data = await response.json();
+          setStats({
+            deliveries: data.deliveries || 0,
+            earnings: data.earnings || 0,
+            avgTime: data.avgTime || 0
+          });
+        }
+      } catch (error) {
+        console.error('Failed to fetch courier stats:', error);
+        // Keep default stats at 0
+      }
+    };
+
+    fetchStats();
+    
+    // Refresh stats every 30 seconds
+    const interval = setInterval(fetchStats, 30000);
+    return () => clearInterval(interval);
+  }, [userId]);
 
   return (
     <div className="h-full bg-[#F8F9FA] overflow-y-auto pb-24">
@@ -50,24 +89,24 @@ export default function CourierDashboard({ onNavigate, onBackToCustomer }: Couri
         </div>
       </div>
 
-      {/* Stats Cards */}
+      {/* Stats Cards - Real Data */}
       <div className="px-6 -mt-6 mb-6">
         <div className="grid grid-cols-3 gap-3">
           <StatCard
             icon={<Package className="w-5 h-5" />}
-            value="12"
+            value={stats.deliveries.toString()}
             label="Today"
             color="#2D6A4F"
           />
           <StatCard
             icon={<DollarSign className="w-5 h-5" />}
-            value="420"
+            value={stats.earnings.toString()}
             label="MAD"
             color="#FFB703"
           />
           <StatCard
             icon={<Clock className="w-5 h-5" />}
-            value="4.2"
+            value={stats.avgTime > 0 ? stats.avgTime.toFixed(1) : '0'}
             label="Avg Time"
             color="#40916C"
           />
@@ -121,31 +160,48 @@ export default function CourierDashboard({ onNavigate, onBackToCustomer }: Couri
       </div>
 
       {/* Recent Deliveries */}
-      <div className="px-6 mb-6">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-[#1F2937]">Recent Deliveries</h3>
-          <button className="text-[#2D6A4F]">View All</button>
+      {stats.deliveries > 0 && (
+        <div className="px-6 mb-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-[#1F2937]">Recent Deliveries</h3>
+            <button className="text-[#2D6A4F] text-sm">View All</button>
+          </div>
+          <div className="bg-white rounded-2xl p-4 shadow-md space-y-3">
+            <RecentDelivery
+              orderId="#315"
+              time="1 hour ago"
+              earnings={35}
+            />
+            <div className="h-px bg-[#E5E7EB]"></div>
+            <RecentDelivery
+              orderId="#312"
+              time="2 hours ago"
+              earnings={40}
+            />
+            <div className="h-px bg-[#E5E7EB]"></div>
+            <RecentDelivery
+              orderId="#308"
+              time="3 hours ago"
+              earnings={30}
+            />
+          </div>
         </div>
-        <div className="bg-white rounded-2xl p-4 shadow-md space-y-3">
-          <RecentDelivery
-            orderId="#315"
-            time="1 hour ago"
-            earnings={35}
-          />
-          <div className="h-px bg-[#E5E7EB]"></div>
-          <RecentDelivery
-            orderId="#312"
-            time="2 hours ago"
-            earnings={40}
-          />
-          <div className="h-px bg-[#E5E7EB]"></div>
-          <RecentDelivery
-            orderId="#308"
-            time="3 hours ago"
-            earnings={30}
-          />
+      )}
+
+      {/* No Deliveries Yet Message */}
+      {stats.deliveries === 0 && (
+        <div className="px-6 mb-6">
+          <div className="bg-white rounded-2xl p-8 shadow-md text-center">
+            <div className="w-16 h-16 rounded-full bg-[#2D6A4F]/10 flex items-center justify-center mx-auto mb-4">
+              <Package className="w-8 h-8 text-[#2D6A4F]" />
+            </div>
+            <h4 className="text-[#1F2937] mb-2">No Deliveries Yet</h4>
+            <p className="text-[#6B7280]">
+              Start accepting orders to build your delivery history and earn money!
+            </p>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
@@ -166,8 +222,8 @@ function StatCard({ icon, value, label, color }: StatCardProps) {
       >
         {icon}
       </div>
-      <p className="text-[#1F2937]">{value}</p>
-      <p className="text-[#6B7280]">{label}</p>
+      <p className="text-[#1F2937] text-xl font-semibold">{value}</p>
+      <p className="text-[#6B7280] text-sm">{label}</p>
     </div>
   );
 }
@@ -190,11 +246,11 @@ function OrderCard({ orderId, pickupLocation, dropoffLocation, distance, earning
     >
       <div className="flex items-start justify-between mb-3">
         <div>
-          <p className="text-[#2D6A4F] mb-1">Order {orderId}</p>
-          <p className="text-[#6B7280]">{distance} • {estimatedTime}</p>
+          <p className="text-[#2D6A4F] font-semibold mb-1">Order {orderId}</p>
+          <p className="text-[#6B7280] text-sm">{distance} • {estimatedTime}</p>
         </div>
         <div className="text-right">
-          <p className="text-[#FFB703]">+{earnings} MAD</p>
+          <p className="text-[#FFB703] font-semibold">+{earnings} MAD</p>
           <ArrowRight className="w-5 h-5 text-[#9CA3AF] ml-auto mt-1" />
         </div>
       </div>
@@ -204,15 +260,15 @@ function OrderCard({ orderId, pickupLocation, dropoffLocation, distance, earning
             <div className="w-2 h-2 rounded-full bg-white"></div>
           </div>
           <div className="flex-1">
-            <p className="text-[#6B7280]">Pickup</p>
-            <p className="text-[#1F2937]">{pickupLocation}</p>
+            <p className="text-[#6B7280] text-xs">Pickup</p>
+            <p className="text-[#1F2937] text-sm">{pickupLocation}</p>
           </div>
         </div>
         <div className="flex items-start space-x-2">
           <MapPin className="w-6 h-6 text-[#FFB703] flex-shrink-0" />
           <div className="flex-1">
-            <p className="text-[#6B7280]">Drop-off</p>
-            <p className="text-[#1F2937]">{dropoffLocation}</p>
+            <p className="text-[#6B7280] text-xs">Drop-off</p>
+            <p className="text-[#1F2937] text-sm">{dropoffLocation}</p>
           </div>
         </div>
       </div>
@@ -230,10 +286,10 @@ function RecentDelivery({ orderId, time, earnings }: RecentDeliveryProps) {
   return (
     <div className="flex items-center justify-between">
       <div>
-        <p className="text-[#1F2937]">Order {orderId}</p>
-        <p className="text-[#6B7280]">{time}</p>
+        <p className="text-[#1F2937] font-medium">Order {orderId}</p>
+        <p className="text-[#6B7280] text-sm">{time}</p>
       </div>
-      <p className="text-[#2D6A4F]">+{earnings} MAD</p>
+      <p className="text-[#2D6A4F] font-semibold">+{earnings} MAD</p>
     </div>
   );
 }

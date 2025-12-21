@@ -270,6 +270,7 @@ export default function App() {
               setIsCourierMode(false);
               navigateTo('home');
             }}
+            userId={userId}
           />
         )}
         {currentScreen === 'courier-pickup' && (
