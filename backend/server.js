@@ -5,9 +5,6 @@ import ordersRouter from './routes/orders.js';
 import authRouter from './routes/auth.js';
 import courierStatsRouter from './routes/courier-stats.js';
 
-// Add this with your other routes
-app.use('/api/courier-stats', courierStatsRouter);
-
 const app = express();
 const PORT = process.env.PORT || 3001;
 
@@ -19,6 +16,7 @@ app.use(express.json());
 app.use('/api/restaurants', restaurantsRouter);
 app.use('/api/orders', ordersRouter);
 app.use('/api/auth', authRouter);
+app.use('/api/courier-stats', courierStatsRouter); // ✅ Now AFTER app is created
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
@@ -34,7 +32,8 @@ app.get('/', (req, res) => {
       health: '/api/health',
       restaurants: '/api/restaurants',
       orders: '/api/orders',
-      auth: '/api/auth/login'
+      auth: '/api/auth/login',
+      courierStats: '/api/courier-stats/:courierId'
     }
   });
 });
@@ -52,4 +51,5 @@ app.listen(PORT, () => {
   console.log(`   - PATCH /api/orders/:id/status`);
   console.log(`   - POST /api/auth/login`);
   console.log(`   - GET  /api/auth/users/:id`);
+  console.log(`   - GET  /api/courier-stats/:courierId`);
 });
