@@ -53,7 +53,9 @@
           "vite": "6.3.5"
       },
       "scripts": {
-          "build": "tsc && vite build",
-          "preview": "vite preview"
+        "dev": "vite",
+        "build": "vite build",
+        "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+        "preview": "vite preview"
       }
   }
