@@ -10,92 +10,211 @@
     "menu": [
       {
         "id": "1",
-        "name": "Cheese Bomb Burger",
-        "price": 50,
-        "image": "https://images.unsplash.com/photo-1722125680299-783f98369451?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxyZXN0YXVyYW50JTIwZm9vZCUyMGJ1cmdlcnxlbnwxfHx8fDE3NjM2MDI5NTF8MA&ixlib=rb-4.1.0&q=80&w=1080",
-        "description": "Juicy beef patty with melted cheese"
+        "name": "Frosty Fries",
+        "price": 25,
+        "image": "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=400",
+        "description": "Crispy golden fries"
       },
       {
         "id": "2",
-        "name": "Classic Burger",
+        "name": "Shawarma",
         "price": 45,
-        "image": "https://images.unsplash.com/photo-1722125680299-783f98369451?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxyZXN0YXVyYW50JTIwZm9vZCUyMGJ1cmdlcnxlbnwxfHx8fDE3NjM2MDI5NTF8MA&ixlib=rb-4.1.0&q=80&w=1080",
-        "description": "Traditional beef burger with lettuce and tomato"
+        "image": "https://images.unsplash.com/photo-1529006557810-274b9b2fc783?w=400",
+        "description": "Middle eastern wrap"
+      },
+      {
+        "id": "3",
+        "name": "Shawarma Box",
+        "price": 55,
+        "image": "https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=400",
+        "description": "Shawarma with rice and sides"
+      },
+      {
+        "id": "4",
+        "name": "Mexican Wrap",
+        "price": 50,
+        "image": "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=400",
+        "description": "Spicy mexican style wrap"
+      },
+      {
+        "id": "5",
+        "name": "Bolognaise Pasta",
+        "price": 60,
+        "image": "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=400",
+        "description": "Pasta with meat sauce"
+      },
+      {
+        "id": "6",
+        "name": "Carbonara Pasta",
+        "price": 60,
+        "image": "https://images.unsplash.com/photo-1612874742237-6526221588e3?w=400",
+        "description": "Creamy pasta with bacon"
+      },
+      {
+        "id": "7",
+        "name": "Pizza Viande Hachée",
+        "price": 65,
+        "image": "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400",
+        "description": "Pizza with ground meat"
+      },
+      {
+        "id": "8",
+        "name": "Pizza Poulet",
+        "price": 65,
+        "image": "https://images.unsplash.com/photo-1571997478779-2adcbbe9ab2f?w=400",
+        "description": "Chicken pizza"
+      },
+      {
+        "id": "9",
+        "name": "Pizza Margarita",
+        "price": 55,
+        "image": "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=400",
+        "description": "Classic margherita pizza"
+      },
+      {
+        "id": "10",
+        "name": "Pizza Charcuterie",
+        "price": 70,
+        "image": "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400",
+        "description": "Pizza with assorted meats"
       }
     ]
   },
   {
     "id": "2",
-    "name": "L'Italien",
-    "image": "https://images.unsplash.com/photo-1649817253654-4d356cdc4662?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwaXp6YSUyMG1lYWx8ZW58MXx8fHwxNzYzNjM2MTkwfDA&ixlib=rb-4.1.0&q=80&w=1080",
+    "name": "L'Américain",
+    "image": "https://images.unsplash.com/photo-1550547660-d9450f859349?w=400",
     "time": "20–25 min",
-    "status": "busy",
-    "rating": 4.6,
-    "description": "Authentic Italian cuisine and pizzas",
+    "status": "open",
+    "rating": 4.7,
+    "description": "American burgers and comfort food",
     "menu": [
       {
-        "id": "3",
-        "name": "Pizza Margherita",
+        "id": "11",
+        "name": "Mushroom Burger",
         "price": 55,
-        "image": "https://images.unsplash.com/photo-1649817253654-4d356cdc4662?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwaXp6YSUyMG1lYWx8ZW58MXx8fHwxNzYzNjM2MTkwfDA&ixlib=rb-4.1.0&q=80&w=1080",
-        "description": "Classic pizza with fresh mozzarella and basil"
+        "image": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400",
+        "description": "Burger with sautéed mushrooms"
       },
       {
-        "id": "4",
-        "name": "Pasta Carbonara",
-        "price": 60,
-        "image": "https://images.unsplash.com/photo-1649817253654-4d356cdc4662?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwaXp6YSUyMG1lYWx8ZW58MXx8fHwxNzYzNjM2MTkwfDA&ixlib=rb-4.1.0&q=80&w=1080",
-        "description": "Creamy pasta with bacon and parmesan"
+        "id": "12",
+        "name": "Cheese Bomb Burger",
+        "price": 50,
+        "image": "https://images.unsplash.com/photo-1572802419224-296b0aeee0d9?w=400",
+        "description": "Loaded with melted cheese"
+      },
+      {
+        "id": "13",
+        "name": "Cheesy Burger",
+        "price": 48,
+        "image": "https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?w=400",
+        "description": "Classic cheeseburger"
       }
     ]
   },
   {
     "id": "3",
-    "name": "Shawarma House",
-    "image": "https://images.unsplash.com/photo-1721980743519-01f627e7b4b6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzYW5kd2ljaCUyMGZvb2R8ZW58MXx8fHwxNzYzNjAyNDI0fDA&ixlib=rb-4.1.0&q=80&w=1080",
-    "time": "10–15 min",
-    "status": "open",
-    "rating": 4.7,
-    "description": "Middle Eastern wraps and sandwiches",
+    "name": "L'Italien",
+    "image": "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400",
+    "time": "25–30 min",
+    "status": "busy",
+    "rating": 4.9,
+    "description": "Authentic Italian pizzas and pasta",
     "menu": [
       {
-        "id": "5",
-        "name": "Shawarma",
-        "price": 45,
-        "image": "https://images.unsplash.com/photo-1721980743519-01f627e7b4b6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzYW5kd2ljaCUyMGZvb2R8ZW58MXx8fHwxNzYzNjAyNDI0fDA&ixlib=rb-4.1.0&q=80&w=1080",
-        "description": "Grilled meat wrap with tahini sauce"
+        "id": "14",
+        "name": "Pizza Viande Hachée",
+        "price": 65,
+        "image": "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400",
+        "description": "Pizza with ground meat"
       },
       {
-        "id": "6",
-        "name": "Falafel Wrap",
-        "price": 40,
-        "image": "https://images.unsplash.com/photo-1721980743519-01f627e7b4b6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzYW5kd2ljaCUyMGZvb2R8ZW58MXx8fHwxNzYzNjAyNDI0fDA&ixlib=rb-4.1.0&q=80&w=1080",
-        "description": "Crispy chickpea patties in a wrap"
+        "id": "15",
+        "name": "Pizza Poulet",
+        "price": 65,
+        "image": "https://images.unsplash.com/photo-1571997478779-2adcbbe9ab2f?w=400",
+        "description": "Chicken pizza"
+      },
+      {
+        "id": "16",
+        "name": "Pizza Margarita",
+        "price": 55,
+        "image": "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=400",
+        "description": "Classic margherita"
+      },
+      {
+        "id": "17",
+        "name": "Pizza Charcuterie",
+        "price": 70,
+        "image": "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400",
+        "description": "Assorted meats pizza"
+      },
+      {
+        "id": "18",
+        "name": "Pizza Napolitaine",
+        "price": 60,
+        "image": "https://images.unsplash.com/photo-1595708684082-a173bb3a06c5?w=400",
+        "description": "Neapolitan style pizza"
+      },
+      {
+        "id": "19",
+        "name": "Pizza Basilico",
+        "price": 58,
+        "image": "https://images.unsplash.com/photo-1593560708920-61dd98c46a4e?w=400",
+        "description": "Pizza with fresh basil"
+      },
+      {
+        "id": "20",
+        "name": "Lasagne",
+        "price": 65,
+        "image": "https://images.unsplash.com/photo-1574894709920-11b28e7367e3?w=400",
+        "description": "Layered pasta with meat sauce"
+      },
+      {
+        "id": "21",
+        "name": "Pasticcio Poulet",
+        "price": 60,
+        "image": "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=400",
+        "description": "Chicken pasta bake"
+      },
+      {
+        "id": "22",
+        "name": "Pasticcio Viande Hachée",
+        "price": 60,
+        "image": "https://images.unsplash.com/photo-1598866594230-a7c12756260f?w=400",
+        "description": "Ground meat pasta bake"
+      },
+      {
+        "id": "23",
+        "name": "Pasticcio Charcuterie",
+        "price": 65,
+        "image": "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=400",
+        "description": "Mixed meats pasta bake"
       }
     ]
   },
   {
     "id": "4",
-    "name": "Salad Bar",
-    "image": "https://images.unsplash.com/photo-1651352650142-385087834d9d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzYWxhZCUyMGhlYWx0aHklMjBmb29kfGVufDF8fHx8MTc2MzU5ODUwMHww&ixlib=rb-4.1.0&q=80&w=1080",
-    "time": "15–20 min",
+    "name": "L'International",
+    "image": "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=400",
+    "time": "Variable",
     "status": "open",
-    "rating": 4.9,
-    "description": "Fresh and healthy salads",
+    "rating": 4.5,
+    "description": "International cuisine with daily specials",
     "menu": [
       {
-        "id": "7",
-        "name": "Caesar Salad",
-        "price": 35,
-        "image": "https://images.unsplash.com/photo-1651352650142-385087834d9d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzYWxhZCUyMGhlYWx0aHklMjBmb29kfGVufDF8fHx8MTc2MzU5ODUwMHww&ixlib=rb-4.1.0&q=80&w=1080",
-        "description": "Crispy romaine with caesar dressing"
+        "id": "24",
+        "name": "Daily Special",
+        "price": 50,
+        "image": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400",
+        "description": "Changes depending on the day"
       },
       {
-        "id": "8",
-        "name": "Greek Salad",
-        "price": 40,
-        "image": "https://images.unsplash.com/photo-1651352650142-385087834d9d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzYWxhZCUyMGhlYWx0aHklMjBmb29kfGVufDF8fHx8MTc2MzU5ODUwMHww&ixlib=rb-4.1.0&q=80&w=1080",
-        "description": "Fresh vegetables with feta cheese"
+        "id": "25",
+        "name": "Salad Bar",
+        "price": 35,
+        "image": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400",
+        "description": "Varies daily"
       }
     ]
   }

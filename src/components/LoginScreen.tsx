@@ -1,12 +1,12 @@
-import { GraduationCap } from 'lucide-react';
+import { GraduationCap, Shield } from 'lucide-react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 
 interface LoginScreenProps {
   onLogin: () => void;
-  onCourierLogin: () => void;
+  onAdminLogin?: () => void;
 }
 
-export default function LoginScreen({ onLogin }: LoginScreenProps) {
+export default function LoginScreen({ onLogin, onAdminLogin }: LoginScreenProps) {
   return (
     <div className="h-full flex flex-col items-center justify-between p-8 bg-gradient-to-b from-[#F8F9FA] to-white">
       <div className="flex-1 flex flex-col items-center justify-center space-y-8 w-full">
@@ -19,41 +19,45 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
         </div>
 
         <div className="text-center space-y-4 px-4">
-          <h1 className="text-[#1F2937]">
+          <h1 className="text-[#1F2937] text-3xl font-bold">
             Log in with MyAUI
           </h1>
-          <p className="text-[#6B7280]">
+          <p className="text-[#6B7280] text-base">
             Access your favorite campus restaurants and skip the wait
           </p>
         </div>
 
-        <button
-          onClick={onLogin}
-          className="w-full bg-white border-2 border-[#2D6A4F] rounded-2xl py-4 flex items-center justify-center space-x-3 shadow-lg hover:bg-[#2D6A4F]/5 transition-all active:scale-95"
-        >
-          <div className="w-8 h-8 rounded-lg bg-[#2D6A4F] flex items-center justify-center">
-            <GraduationCap className="w-5 h-5 text-white" />
-          </div>
-          <span className="text-[#2D6A4F]">
-            Continue with AUI SSO
-          </span>
-        </button>
+        {/* ✅ FIXED: Both buttons always visible */}
+        <div className="w-full space-y-3">
+          {/* Student Login */}
+          <button
+            onClick={onLogin}
+            className="w-full bg-white border-2 border-[#2D6A4F] rounded-2xl py-4 flex items-center justify-center space-x-3 shadow-lg hover:bg-[#2D6A4F]/5 transition-all active:scale-95"
+          >
+            <div className="w-8 h-8 rounded-lg bg-[#2D6A4F] flex items-center justify-center">
+              <GraduationCap className="w-5 h-5 text-white" />
+            </div>
+            <span className="text-[#2D6A4F] font-medium">
+              Continue with AUI SSO
+            </span>
+          </button>
 
-        <div className="flex items-center space-x-4 w-full">
-          <div className="flex-1 h-px bg-[#E5E7EB]"></div>
-          <span className="text-[#9CA3AF]">or</span>
-          <div className="flex-1 h-px bg-[#E5E7EB]"></div>
+          {/* Admin Login - Always Visible */}
+          <button
+            onClick={onAdminLogin || onLogin}
+            className="w-full bg-gradient-to-r from-[#2D6A4F] to-[#40916C] text-white rounded-2xl py-4 flex items-center justify-center space-x-3 shadow-lg hover:shadow-xl transition-all active:scale-95"
+          >
+            <div className="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center">
+              <Shield className="w-5 h-5 text-white" />
+            </div>
+            <span className="font-medium">
+              Continue as Admin
+            </span>
+          </button>
         </div>
-
-        <button
-          onClick={onLogin}
-          className="text-[#6B7280] hover:text-[#2D6A4F] transition-colors"
-        >
-          Continue as Guest
-        </button>
       </div>
 
-      <p className="text-[#9CA3AF] text-center">
+      <p className="text-[#9CA3AF] text-center text-sm">
         By continuing, you agree to our Terms & Privacy Policy
       </p>
     </div>

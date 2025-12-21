@@ -3,6 +3,10 @@ import { corsMiddleware } from './middleware/cors.js';
 import restaurantsRouter from './routes/restaurants.js';
 import ordersRouter from './routes/orders.js';
 import authRouter from './routes/auth.js';
+import courierStatsRouter from './routes/courier-stats.js';
+
+// Add this with your other routes
+app.use('/api/courier-stats', courierStatsRouter);
 
 const app = express();
 const PORT = process.env.PORT || 3001;

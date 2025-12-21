@@ -11,10 +11,15 @@ interface ProfileSettingsProps {
   onBack: () => void;
   isCourierMode: boolean;
   onToggleCourierMode: () => void;
+  userId?: string;
+  onLogout: () => void;
 }
 
-export default function ProfileSettings({ onBack, isCourierMode, onToggleCourierMode }: ProfileSettingsProps) {
+export default function ProfileSettings({ onBack, isCourierMode, onToggleCourierMode, userId, onLogout }: ProfileSettingsProps) {
   const [showPerformanceStats, setShowPerformanceStats] = useState(false);
+  
+  // ✅ FIXED: Only admin users can see performance stats
+  const isAdmin = userId === 'admin';
 
   return (
     <>
@@ -34,9 +39,15 @@ export default function ProfileSettings({ onBack, isCourierMode, onToggleCourier
               <User className="w-10 h-10 text-white" />
             </div>
             <div className="flex-1">
-              <h2 className="text-white mb-1">Ahmed El Mansouri</h2>
-              <p className="text-white/90">ahmed.mansouri@aui.ma</p>
-              <p className="text-white/80 mt-1">Student ID: 2024-1234</p>
+              <h2 className="text-white mb-1">
+                {isAdmin ? 'Admin User' : 'Ahmed El Mansouri'}
+              </h2>
+              <p className="text-white/90">
+                {isAdmin ? 'admin@aui.ma' : 'ahmed.mansouri@aui.ma'}
+              </p>
+              <p className="text-white/80 mt-1">
+                {isAdmin ? 'Administrator' : 'Student ID: 2024-1234'}
+              </p>
             </div>
           </div>
         </div>
@@ -64,24 +75,26 @@ export default function ProfileSettings({ onBack, isCourierMode, onToggleCourier
           </button>
         </div>
 
-        {/* Performance Stats Button - Architecture Demo */}
-        <div className="px-6 mb-6">
-          <button
-            onClick={() => setShowPerformanceStats(true)}
-            className="w-full bg-gradient-to-r from-[#2D6A4F] to-[#40916C] rounded-2xl p-4 shadow-lg flex items-center justify-between hover:shadow-xl transition-all active:scale-95"
-          >
-            <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
-                <Activity className="w-6 h-6 text-white" />
+        {/* ✅ FIXED: Performance Stats Button - ADMIN ONLY */}
+        {isAdmin && (
+          <div className="px-6 mb-6">
+            <button
+              onClick={() => setShowPerformanceStats(true)}
+              className="w-full bg-gradient-to-r from-[#2D6A4F] to-[#40916C] rounded-2xl p-4 shadow-lg flex items-center justify-between hover:shadow-xl transition-all active:scale-95"
+            >
+              <div className="flex items-center space-x-3">
+                <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
+                  <Activity className="w-6 h-6 text-white" />
+                </div>
+                <div className="text-left">
+                  <p className="text-white font-semibold">Performance Metrics</p>
+                  <p className="text-white/80 text-sm">View system performance stats</p>
+                </div>
               </div>
-              <div className="text-left">
-                <p className="text-white font-semibold">Performance Metrics</p>
-                <p className="text-white/80 text-sm">View system performance stats</p>
-              </div>
-            </div>
-            <ChevronRight className="w-5 h-5 text-white/80" />
-          </button>
-        </div>
+              <ChevronRight className="w-5 h-5 text-white/80" />
+            </button>
+          </div>
+        )}
 
         {/* Account Section */}
         <div className="px-6 mb-6">
@@ -179,11 +192,14 @@ export default function ProfileSettings({ onBack, isCourierMode, onToggleCourier
           </div>
         )}
 
-        {/* Log Out */}
+        {/* ✅ FIXED: Log Out Button */}
         <div className="px-6 pb-24">
-          <button className="w-full bg-white rounded-2xl p-4 shadow-md flex items-center justify-center space-x-3 text-[#DC2626] hover:bg-[#FEF2F2] transition-all active:scale-95">
+          <button 
+            onClick={onLogout}
+            className="w-full bg-white rounded-2xl p-4 shadow-md flex items-center justify-center space-x-3 text-[#DC2626] hover:bg-[#FEF2F2] transition-all active:scale-95"
+          >
             <LogOut className="w-5 h-5" />
-            <span>Log Out</span>
+            <span className="font-medium">Log Out</span>
           </button>
         </div>
       </div>

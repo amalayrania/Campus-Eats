@@ -201,10 +201,13 @@ export default function App() {
         )}
         {currentScreen === 'login' && (
           <LoginScreen 
-            onLogin={() => navigateTo('home')}
-            onCourierLogin={() => {
-              setIsCourierMode(true);
-              navigateTo('courier-dashboard');
+            onLogin={() => {
+              setUserId('user1'); // Regular student
+              navigateTo('home');
+            }}
+            onAdminLogin={() => {
+              setUserId('admin'); // Admin user
+              navigateTo('home');
             }}
           />
         )}
@@ -256,6 +259,8 @@ export default function App() {
               setIsCourierMode(!isCourierMode);
               navigateTo(isCourierMode ? 'home' : 'courier-dashboard');
             }}
+            userId={userId}
+            onLogout={() => navigateTo('login')} // Add this
           />
         )}
         {currentScreen === 'courier-dashboard' && (
