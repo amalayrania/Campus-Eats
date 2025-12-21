@@ -177,8 +177,8 @@ export default function OrderTracking({ onBack, activeOrder, onCancelOrder }: Or
               ))}
               <div className="h-px bg-[#E5E7EB] my-2"></div>
               <div className="flex items-center justify-between">
-                <span className="text-[#1F2937]">Total</span>
-                <span className="text-[#2D6A4F]">{activeOrder.totalAmount} MAD</span>
+                <span className="text-[#1F2937] font-semibold">Total</span>
+                <span className="text-[#2D6A4F] font-bold text-lg">{activeOrder.totalAmount} MAD</span>
               </div>
             </div>
           </div>
@@ -193,9 +193,6 @@ export default function OrderTracking({ onBack, activeOrder, onCancelOrder }: Or
             >
               Cancel Order
             </button>
-            <p className="text-xs text-center text-[#6B7280] mt-2">
-              🎯 Usability Demo: 2-click cancellation with timing
-            </p>
           </div>
         )}
 

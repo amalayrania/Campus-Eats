@@ -81,9 +81,6 @@ export default function ProfileSettings({ onBack, isCourierMode, onToggleCourier
             </div>
             <ChevronRight className="w-5 h-5 text-white/80" />
           </button>
-          <p className="text-xs text-center text-gray-500 mt-2">
-            🎯 Architecture Demo: Performance & Caching
-          </p>
         </div>
 
         {/* Account Section */}
